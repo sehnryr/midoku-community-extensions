@@ -1,0 +1,50 @@
+package midoku:bindings@0.1.0;
+
+interface api {
+    use midoku:types/chapter@0.1.0.{chapter};
+    use midoku:types/filter@0.1.0.{filter};
+    use midoku:types/manga@0.1.0.{manga};
+    use midoku:types/page@0.1.0.{page};
+
+    /// Initialize the extension.
+    /// 
+    /// Sources may have initialization logic that needs to be called before
+    /// calling other functions. This may include setting up rate limiters or
+    /// other configuration.
+    initialize: func() -> result;
+
+    /// Get a list of manga from the source.
+    /// 
+    /// This function should return a list of manga that can be displayed to the
+    /// user. The `filters` parameter is used to filter the results based on
+    /// user input. The `page` parameter is used to paginate the results if
+    /// necessary.
+    get-manga-list: func(filters: list<filter>, page: u32) -> result<tuple<list<manga>, bool>>;
+
+    /// Get details for a specific manga.
+    /// 
+    /// This function should return detailed information about a specific manga.
+    get-manga-details: func(manga-id: string) -> result<manga>;
+
+    /// Get a list of chapters for a specific manga.
+    /// 
+    /// This function should return a list of chapters for a specific manga.
+    get-chapter-list: func(manga-id: string) -> result<list<chapter>>;
+
+    /// Get a list of pages for a specific chapter.
+    /// 
+    /// This function should return a list of pages for a specific chapter.
+    get-page-list: func(manga-id: string, chapter-id: string) -> result<list<page>>;
+}
+
+world bindings {
+    import midoku:http/outgoing-handler@0.1.0;
+    import midoku:http/types@0.1.0;
+    import midoku:limiter/rate-limiter@0.1.0;
+
+    export midoku:types/chapter@0.1.0;
+    export midoku:types/filter@0.1.0;
+    export midoku:types/manga@0.1.0;
+    export midoku:types/page@0.1.0;
+    export api;
+}

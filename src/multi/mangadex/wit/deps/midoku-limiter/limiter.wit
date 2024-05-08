@@ -1,0 +1,43 @@
+package midoku:limiter@0.1.0;
+
+/// The `rate-limiter` interface provides a rate limiting mechanism that
+/// enforces a maximum number of calls that can be made in a single period.
+interface rate-limiter {
+    /// Returns the burst size of the limiter. The burst size is the maximum
+    /// number of calls that can be made in a single period.
+    /// 
+    /// Returns `Some(burst)` if the burst size is set, `None` otherwise.
+    burst: func() -> option<u32>;
+
+    /// Returns the period in milliseconds of the limiter. The period is the
+    /// duration in milliseconds over which the burst size is enforced.
+    /// 
+    /// Returns `Some(period)` if the period is set, `None` otherwise.
+    period-ms: func() -> option<u32>;
+
+    /// Sets the burst size of the limiter. The burst size is the maximum number
+    /// of calls that can be made in a single period.
+    /// 
+    /// Returns `Ok` if the burst size was set successfully, `Err` otherwise.
+    set-burst: func(burst: u32) -> result;
+
+    /// Sets the period in milliseconds of the limiter. The period is the
+    /// duration in milliseconds over which the burst size is enforced.
+    /// 
+    /// Returns `Ok` if the period was set successfully, `Err` otherwise.
+    set-period-ms: func(period-ms: u32) -> result;
+
+    /// Returns the readyness of the limiter. If the limiter is ready, it means
+    /// that the rate limit is not exceeded and the call can proceed.
+    /// 
+    /// Returns `true` if the limiter is ready, `false` otherwise.
+    ready: func() -> bool;
+
+    /// `block` returns immediately if the rate limit is not exceeded, otherwise
+    /// it blocks until the limiter allows the call to proceed.
+    block: func();
+}
+
+world limiter {
+    import rate-limiter;
+}

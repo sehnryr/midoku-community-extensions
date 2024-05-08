@@ -1,0 +1,20 @@
+[
+    {
+        "type": "title"
+    },
+    {
+        "type": "sort",
+        "name": "Sort",
+        "canBeReversed": true,
+        "options": [
+            "Latest Chapter",
+            "Relevance",
+            "Follows",
+            "Created Date",
+            "Last Updated",
+            "Title"
+        ],
+        "defaultOptionIndex": 0,
+        "defaultOptionReversed": false
+    }
+]

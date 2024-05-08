@@ -1,0 +1,165 @@
+{
+    "en_US": {
+        "code": "en",
+        "default": true
+    },
+    "ja_JP": {
+        "code": "ja"
+    },
+    "ko_KR": {
+        "code": "ko"
+    },
+    "zh_CN": {
+        "code": "zh"
+    },
+    "zh_HK": {
+        "code": "zh-hk"
+    },
+    "sq_AL": {
+        "code": "sq"
+    },
+    "ar_SA": {
+        "code": "ar"
+    },
+    "az_AZ": {
+        "code": "az"
+    },
+    "bn_BD": {
+        "code": "bn"
+    },
+    "bg_BG": {
+        "code": "bg"
+    },
+    "my_MM": {
+        "code": "my"
+    },
+    "ca_ES": {
+        "code": "ca"
+    },
+    "hr_HR": {
+        "code": "hr"
+    },
+    "cs_CZ": {
+        "code": "cs"
+    },
+    "da_DK": {
+        "code": "da"
+    },
+    "nl_NL": {
+        "code": "nl"
+    },
+    "eo": {
+        "code": "eo"
+    },
+    "et_EE": {
+        "code": "et"
+    },
+    "fil_PH": {
+        "code": "fil"
+    },
+    "fi_FI": {
+        "code": "fi"
+    },
+    "fr_FR": {
+        "code": "fr"
+    },
+    "ka_GE": {
+        "code": "ka"
+    },
+    "de_DE": {
+        "code": "de"
+    },
+    "el_GR": {
+        "code": "el"
+    },
+    "he_IL": {
+        "code": "he"
+    },
+    "hi_IN": {
+        "code": "hi"
+    },
+    "hu_HU": {
+        "code": "hu"
+    },
+    "id_ID": {
+        "code": "id"
+    },
+    "it_IT": {
+        "code": "it"
+    },
+    "kk_KZ": {
+        "code": "kk"
+    },
+    "la": {
+        "code": "la"
+    },
+    "lt_LT": {
+        "code": "lt"
+    },
+    "ms_MY": {
+        "code": "ms"
+    },
+    "mn_MN": {
+        "code": "mn"
+    },
+    "ne_NP": {
+        "code": "ne"
+    },
+    "no_NO": {
+        "code": "no"
+    },
+    "fa_IR": {
+        "code": "fa"
+    },
+    "pl_PL": {
+        "code": "pl"
+    },
+    "pt_PT": {
+        "code": "pt"
+    },
+    "pt_BR": {
+        "code": "pt-br"
+    },
+    "ro_RO": {
+        "code": "ro"
+    },
+    "ru_RU": {
+        "code": "ru"
+    },
+    "sr_SP": {
+        "code": "sr"
+    },
+    "sk_SK": {
+        "code": "sk"
+    },
+    "sl_SI": {
+        "code": "sl"
+    },
+    "es_ES": {
+        "code": "es"
+    },
+    "es_419": {
+        "code": "es-la"
+    },
+    "sv_SE": {
+        "code": "sv"
+    },
+    "ta_IN": {
+        "code": "ta"
+    },
+    "te_IN": {
+        "code": "te"
+    },
+    "th_TH": {
+        "code": "th"
+    },
+    "tr_TR": {
+        "code": "tr"
+    },
+    "uk_UA": {
+        "code": "uk"
+    },
+    "vi_VN": {
+        "code": "vi"
+    }
+}
