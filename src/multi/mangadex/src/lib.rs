@@ -39,7 +39,7 @@ impl Guest for Component {
         let offset = page * limit;
 
         let mut url = format!(
-            "{}/manga/?includes[]=author&includes[]=artist&includes[]=cover_art&limit={}&offset={}",
+            "{}/manga/?includes[]=cover_art&limit={}&offset={}",
             API_URL, limit, offset
         );
 
