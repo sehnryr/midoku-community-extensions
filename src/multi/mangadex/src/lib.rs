@@ -8,13 +8,13 @@ mod bindings;
 use bindings::exports::midoku::bindings::api::Guest;
 use bindings::exports::midoku::types::chapter::Chapter;
 use bindings::exports::midoku::types::filter::Filter;
-use bindings::exports::midoku::types::manga::Manga;
+use bindings::exports::midoku::types::manga::{ContentRating, Manga, ReadingMode, Status};
 use bindings::exports::midoku::types::page::Page;
 use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
 use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
-use crate::utils::parse::parse_manga;
+use crate::utils::parse::parse_partial_manga;
 use crate::utils::url_encode::url_encode;
 
 const API_URL: &str = "https://api.mangadex.org";
@@ -85,7 +85,7 @@ impl Guest for Component {
         let mut manga_list = Vec::new();
         for manga_data in data {
             let manga_data = manga_data.borrow_object()?;
-            manga_list.push(parse_manga(manga_data)?);
+            manga_list.push(parse_partial_manga(manga_data)?);
         }
 
         // Get the total number of manga
@@ -113,3 +113,41 @@ impl Guest for Component {
 }
 
 bindings::export!(Component with_types_in bindings);
+
+// Implement the default trait for the types
+
+impl Default for Status {
+    fn default() -> Self {
+        Status::Unknown
+    }
+}
+
+impl Default for ContentRating {
+    fn default() -> Self {
+        ContentRating::Safe
+    }
+}
+
+impl Default for ReadingMode {
+    fn default() -> Self {
+        ReadingMode::RightToLeft
+    }
+}
+
+impl Default for Manga {
+    fn default() -> Self {
+        Manga {
+            id: Default::default(),
+            title: Default::default(),
+            cover_url: Default::default(),
+            url: Default::default(),
+            description: Default::default(),
+            author_name: Default::default(),
+            artist_name: Default::default(),
+            categories: Default::default(),
+            status: Default::default(),
+            content_rating: Default::default(),
+            reading_mode: Default::default(),
+        }
+    }
+}
