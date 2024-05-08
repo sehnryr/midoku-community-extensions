@@ -110,6 +110,9 @@ impl Guest for Component {
     }
 
     fn get_manga_details(manga_id: String) -> Result<Manga, ()> {
+        // Block until the rate limiter allows the request
+        block();
+
         let url = format!(
             "{}/manga/{}?includes[]=cover_art&includes[]=author&includes[]=artist",
             API_URL, manga_id,
