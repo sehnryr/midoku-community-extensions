@@ -14,7 +14,7 @@ use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
 use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
-use crate::utils::parse::parse_partial_manga;
+use crate::utils::parse::{parse_manga, parse_partial_manga};
 use crate::utils::url_encode::url_encode;
 
 const API_URL: &str = "https://api.mangadex.org";
@@ -100,7 +100,26 @@ impl Guest for Component {
     }
 
     fn get_manga_details(manga_id: String) -> Result<Manga, ()> {
-        todo!("Get manga details not implemented")
+        let url = format!(
+            "{}/manga/{}?includes[]=cover_art&includes[]=author&includes[]=artist",
+            API_URL, manga_id,
+        );
+
+        let headers = vec![("User-Agent".to_string(), "Midoku".to_string())];
+        let response = handle(Method::Get, &url, Some(&headers), None)?;
+
+        let bytes = response.bytes();
+        let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
+
+        // Parse the JSON response
+        let json = miniserde_json::from_str::<miniserde_json::Value>(&content)
+            .map_err(|_| ())?
+            .take_object()?;
+
+        // Get the data field from the JSON response
+        let manga_data = json.get_object("data")?;
+
+        Ok(parse_manga(manga_data)?)
     }
 
     fn get_chapter_list(manga_id: String) -> Result<Vec<Chapter>, ()> {
