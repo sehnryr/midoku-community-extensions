@@ -8,12 +8,13 @@ mod bindings;
 use bindings::exports::midoku::bindings::api::Guest;
 use bindings::exports::midoku::types::chapter::Chapter;
 use bindings::exports::midoku::types::filter::Filter;
-use bindings::exports::midoku::types::manga::{ContentRating, Manga, ReadingMode, Status};
+use bindings::exports::midoku::types::manga::Manga;
 use bindings::exports::midoku::types::page::Page;
 use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
 use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
+use crate::utils::parse::parse_manga;
 use crate::utils::url_encode::url_encode;
 
 const URL: &str = "https://api.mangadex.org";
@@ -37,7 +38,7 @@ impl Guest for Component {
         let offset = page * limit;
 
         let mut url = format!(
-            "{}/manga/?includes[]=cover_art&limit={}&offset={}",
+            "{}/manga/?includes[]=author&includes[]=artist&includes[]=cover_art&limit={}&offset={}",
             URL, limit, offset
         );
 
@@ -83,64 +84,7 @@ impl Guest for Component {
         let mut manga_list = Vec::new();
         for manga_data in data {
             let manga_data = manga_data.borrow_object()?;
-            let attributes = manga_data.get_object("attributes")?;
-
-            let id = manga_data.get_string("id")?;
-
-            let title = {
-                let title_object = attributes.get_object("title")?;
-                if title_object.contains_key("en") {
-                    title_object.get_string("en")?
-                } else {
-                    let (_, title_value) = title_object.first_key_value().ok_or(())?;
-                    title_value.borrow_string()?
-                }
-            };
-
-            let cover_url = if let Ok(relationships) = manga_data.get_array("relationships") {
-                let mut cover_art_file_name = &String::new();
-                for relationship in relationships {
-                    let relationship = relationship.borrow_object()?;
-                    let relationship_type = relationship.get_string("type");
-
-                    if relationship_type.is_err() {
-                        continue;
-                    }
-
-                    if relationship_type.unwrap() != "cover_art" {
-                        continue;
-                    }
-
-                    let relationship_attributes = relationship.get_object("attributes")?;
-                    cover_art_file_name = relationship_attributes.get_string("fileName")?;
-                    break;
-                }
-
-                if cover_art_file_name.is_empty() {
-                    Default::default()
-                } else {
-                    format!(
-                        "https://uploads.mangadex.org/cover/{}/{}",
-                        id, cover_art_file_name
-                    )
-                }
-            } else {
-                Default::default()
-            };
-
-            manga_list.push(Manga {
-                id: id.clone(),
-                title: title.clone(),
-                url: Default::default(),
-                description: Default::default(),
-                cover_url,
-                author_name: Default::default(),
-                artist_name: Default::default(),
-                categories: Default::default(),
-                status: Status::Ongoing,
-                content_rating: ContentRating::Safe,
-                reading_mode: ReadingMode::RightToLeft,
-            });
+            manga_list.push(parse_manga(manga_data)?);
         }
 
         // Get the total number of manga
