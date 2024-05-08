@@ -1,8 +1,8 @@
 use miniserde::json as miniserde_json;
 
 use crate::bindings::exports::midoku::types::manga::{ContentRating, Manga, ReadingMode, Status};
-
-use super::miniserde_trait::{BorrowType, GetType};
+use crate::utils::miniserde_trait::{BorrowType, GetType};
+use crate::HOME_URL;
 
 fn parse_manga_id(manga_data: &miniserde_json::Object) -> Result<String, ()> {
     manga_data.get_string("id").map(|id| id.to_string())
@@ -55,7 +55,7 @@ pub fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
 
     let id = parse_manga_id(manga_data)?;
     let title = parse_manga_attribute(attributes, "title")?;
-    let url = format!("https://mangadex.org/title/{}", id);
+    let url = format!("{}/title/{}", HOME_URL, id);
     let description = parse_manga_attribute(attributes, "description")?;
 
     let mut cover_file = String::new();
@@ -93,7 +93,7 @@ pub fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
     let cover_url = if cover_file.is_empty() {
         Default::default()
     } else {
-        format!("https://mangadex.org/covers/{}/{}", id, cover_file)
+        format!("{}/covers/{}/{}", HOME_URL, id, cover_file)
     };
 
     let mut categories: Vec<String> = Vec::new();

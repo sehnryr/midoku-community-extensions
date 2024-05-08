@@ -17,7 +17,8 @@ use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
 use crate::utils::parse::parse_manga;
 use crate::utils::url_encode::url_encode;
 
-const URL: &str = "https://api.mangadex.org";
+const API_URL: &str = "https://api.mangadex.org";
+const HOME_URL: &str = "https://mangadex.org";
 
 struct Component;
 
@@ -39,7 +40,7 @@ impl Guest for Component {
 
         let mut url = format!(
             "{}/manga/?includes[]=author&includes[]=artist&includes[]=cover_art&limit={}&offset={}",
-            URL, limit, offset
+            API_URL, limit, offset
         );
 
         for filter in filters {
