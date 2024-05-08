@@ -65,7 +65,8 @@ impl Guest for Component {
             }
         }
 
-        let response = handle(Method::Get, &url, None, None)?;
+        let headers = vec![("User-Agent".to_string(), "Midoku".to_string())];
+        let response = handle(Method::Get, &url, Some(&headers), None)?;
 
         let bytes = response.bytes();
         let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
