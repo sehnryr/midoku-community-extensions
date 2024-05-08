@@ -2,16 +2,18 @@ use miniserde::json as miniserde_json;
 
 use crate::bindings::exports::midoku::types::manga::{ContentRating, Manga, ReadingMode, Status};
 use crate::utils::miniserde_trait::{BorrowType, GetType};
-use crate::HOME_URL;
+use crate::{HOME_URL, LOCALE};
 
 pub fn parse_manga_id(manga_data: &miniserde_json::Object) -> Result<String, ()> {
     manga_data.get_string("id").map(|id| id.to_string())
 }
 
 pub fn parse_manga_attribute(attributes: &miniserde_json::Object, key: &str) -> Result<String, ()> {
+    let locale: &str = &LOCALE;
+
     let attribute_object = attributes.get_object(key)?;
-    let attribute = if attribute_object.contains_key("en") {
-        attribute_object.get_string("en")?
+    let attribute = if attribute_object.contains_key(locale) {
+        attribute_object.get_string(locale)?
     } else if !attribute_object.is_empty() {
         let (_, attribute_value) = attribute_object.first_key_value().ok_or(())?;
         attribute_value.borrow_string()?
@@ -93,6 +95,8 @@ pub fn parse_partial_manga(manga_data: &miniserde_json::Object) -> Result<Manga,
 }
 
 pub fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
+    let locale: &str = &LOCALE;
+
     let attributes = manga_data.get_object("attributes")?;
 
     let id = parse_manga_id(manga_data)?;
@@ -145,8 +149,8 @@ pub fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
             let tag = tag.borrow_object()?;
             let tag_attributes = tag.get_object("attributes")?;
             let tag_name_object = tag_attributes.get_object("name")?;
-            let tag_name = if tag_name_object.contains_key("en") {
-                tag_name_object.get_string("en")?
+            let tag_name = if tag_name_object.contains_key(locale) {
+                tag_name_object.get_string(locale)?
             } else {
                 let (_, tag_name_value) = tag_name_object.first_key_value().ok_or(())?;
                 tag_name_value.borrow_string()?

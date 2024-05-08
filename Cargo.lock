@@ -928,6 +928,7 @@ name = "midoku-multi-mangadex"
 version = "0.1.0"
 dependencies = [
  "miniserde",
+ "once_cell",
  "wit-bindgen-rt",
  "wit-deps",
 ]

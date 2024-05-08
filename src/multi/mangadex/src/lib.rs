@@ -1,6 +1,7 @@
 mod utils;
 
 use miniserde::json as miniserde_json;
+use once_cell::sync::Lazy;
 
 #[allow(warnings)]
 mod bindings;
@@ -20,6 +21,12 @@ use crate::utils::url_encode::url_encode;
 const API_URL: &str = "https://api.mangadex.org";
 const HOME_URL: &str = "https://mangadex.org";
 
+static LOCALE: Lazy<&str> = Lazy::new(|| {
+    // TODO: Get the locale from the host
+
+    "en"
+});
+
 struct Component;
 
 impl Guest for Component {
@@ -27,6 +34,9 @@ impl Guest for Component {
         // Set the rate limiter to 3 requests per second
         set_burst(3)?;
         set_period_ms(1000)?;
+
+        // First access the lazy static variable to initialize it
+        let _locale: &str = &LOCALE;
 
         Ok(())
     }

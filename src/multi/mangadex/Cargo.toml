@@ -6,6 +6,7 @@ publish.workspace = true
 
 [dependencies]
 miniserde = "0.1.39"
+once_cell = "1.19.0"
 wit-bindgen-rt = { version = "0.24.0", features = ["bitflags"] }
 
 [build-dependencies]
