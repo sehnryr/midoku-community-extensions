@@ -21,11 +21,13 @@ interface filter {
     }
 
     record filter-sort {
-        name: string,
-        can-be-reversed: bool,
-        options: list<string>,
-        default-option-index: u32,
-        default-option-reversed: bool,
+        option-index: u32,
+
+        /// If true, the sort order is reversed.
+        ///
+        /// This is analogous to an ascending if true or descending if false sort
+        /// order.
+        option-reversed: bool,
     }
 
     variant filter {

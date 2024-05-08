@@ -47,7 +47,20 @@ impl Guest for Component {
                     url.push_str(&format!("&title={}", url_encode(&title.query)));
                 }
                 Filter::Sort(sort) => {
-                    todo!("Sort filter not implemented");
+                    let option = match sort.option_index {
+                        0 => "latestUploadedChapter",
+                        1 => "relevance",
+                        2 => "followedCount",
+                        3 => "createdAt",
+                        4 => "updatedAt",
+                        5 => "title",
+                        _ => return Err(()),
+                    };
+                    let order = match sort.option_reversed {
+                        true => "asc",
+                        false => "desc",
+                    };
+                    url.push_str(&format!("&order[{}]={}", option, order));
                 }
             }
         }
