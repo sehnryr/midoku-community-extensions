@@ -6,6 +6,21 @@ use crate::{HOME_URL, LOCALE};
 
 use super::parse_object_attribute;
 
+pub trait ParseManga {
+    fn parse_manga(&self) -> Result<Manga, ()>;
+    fn parse_partial_manga(&self) -> Result<Manga, ()>;
+}
+
+impl ParseManga for miniserde_json::Object {
+    fn parse_manga(&self) -> Result<Manga, ()> {
+        parse_manga(self)
+    }
+
+    fn parse_partial_manga(&self) -> Result<Manga, ()> {
+        parse_partial_manga(self)
+    }
+}
+
 fn parse_manga_status(status: &str) -> Status {
     match status {
         "ongoing" => Status::Ongoing,
@@ -35,49 +50,7 @@ fn parse_manga_reading_mode(reading_mode: &str) -> ReadingMode {
     }
 }
 
-pub fn parse_partial_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
-    let attributes = manga_data.get_object("attributes")?;
-
-    let id = manga_data.get_string("id")?.clone();
-    let title = parse_object_attribute(attributes, "title")?;
-
-    let mut cover_file = String::new();
-
-    if let Ok(relationships) = manga_data.get_array("relationships") {
-        for relationship in relationships {
-            let relationship = relationship.borrow_object()?;
-            let relationship_type = relationship.get_string("type");
-            let relationship_attributes = relationship.get_object("attributes");
-
-            if relationship_type.is_err() || relationship_attributes.is_err() {
-                continue;
-            }
-
-            let relationship_type = relationship_type.unwrap();
-            let relationship_attributes = relationship_attributes.unwrap();
-
-            if relationship_type.as_str() == "cover_art" {
-                cover_file = relationship_attributes.get_string("fileName")?.clone();
-                break;
-            }
-        }
-    }
-
-    let cover_url = if cover_file.is_empty() {
-        Default::default()
-    } else {
-        format!("{}/covers/{}/{}", HOME_URL, id, cover_file)
-    };
-
-    Ok(Manga {
-        id,
-        title,
-        cover_url,
-        ..Default::default()
-    })
-}
-
-pub fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
+fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
     let locale: &str = &LOCALE;
 
     let attributes = manga_data.get_object("attributes")?;
@@ -175,5 +148,47 @@ pub fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
         status,
         content_rating,
         reading_mode,
+    })
+}
+
+fn parse_partial_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
+    let attributes = manga_data.get_object("attributes")?;
+
+    let id = manga_data.get_string("id")?.clone();
+    let title = parse_object_attribute(attributes, "title")?;
+
+    let mut cover_file = String::new();
+
+    if let Ok(relationships) = manga_data.get_array("relationships") {
+        for relationship in relationships {
+            let relationship = relationship.borrow_object()?;
+            let relationship_type = relationship.get_string("type");
+            let relationship_attributes = relationship.get_object("attributes");
+
+            if relationship_type.is_err() || relationship_attributes.is_err() {
+                continue;
+            }
+
+            let relationship_type = relationship_type.unwrap();
+            let relationship_attributes = relationship_attributes.unwrap();
+
+            if relationship_type.as_str() == "cover_art" {
+                cover_file = relationship_attributes.get_string("fileName")?.clone();
+                break;
+            }
+        }
+    }
+
+    let cover_url = if cover_file.is_empty() {
+        Default::default()
+    } else {
+        format!("{}/covers/{}/{}", HOME_URL, id, cover_file)
+    };
+
+    Ok(Manga {
+        id,
+        title,
+        cover_url,
+        ..Default::default()
     })
 }

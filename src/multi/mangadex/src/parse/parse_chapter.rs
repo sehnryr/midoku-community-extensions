@@ -7,7 +7,17 @@ use crate::{HOME_URL, LOCALE};
 
 use super::parse_object_attribute;
 
-pub fn parse_chapter(chapter_data: &miniserde_json::Object) -> Result<Chapter, ()> {
+pub trait ParseChapter {
+    fn parse_chapter(&self) -> Result<Chapter, ()>;
+}
+
+impl ParseChapter for miniserde_json::Object {
+    fn parse_chapter(&self) -> Result<Chapter, ()> {
+        parse_chapter(self)
+    }
+}
+
+fn parse_chapter(chapter_data: &miniserde_json::Object) -> Result<Chapter, ()> {
     let locale: &str = &LOCALE;
 
     let attributes = chapter_data.get_object("attributes")?;

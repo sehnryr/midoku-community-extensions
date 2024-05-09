@@ -15,8 +15,7 @@ use bindings::exports::midoku::types::page::Page;
 use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
-use crate::parse::parse_chapter::parse_chapter;
-use crate::parse::parse_manga::{parse_manga, parse_partial_manga};
+use crate::parse::{parse_chapter::ParseChapter, parse_manga::ParseManga};
 use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
 use crate::utils::url_encode::url_encode;
 
@@ -98,7 +97,7 @@ impl Guest for Component {
         let mut manga_list = Vec::new();
         for manga_data in data {
             let manga_data = manga_data.borrow_object()?;
-            manga_list.push(parse_partial_manga(manga_data)?);
+            manga_list.push(manga_data.parse_partial_manga()?);
         }
 
         // Get the total number of manga
@@ -135,7 +134,7 @@ impl Guest for Component {
         // Get the data field from the JSON response
         let manga_data = json.get_object("data")?;
 
-        Ok(parse_manga(manga_data)?)
+        Ok(manga_data.parse_manga()?)
     }
 
     fn get_chapter_list(manga_id: String) -> Result<Vec<Chapter>, ()> {
@@ -187,7 +186,7 @@ impl Guest for Component {
         let mut chapter_list = Vec::with_capacity(total as usize);
         for chapter_data in data {
             let chapter_data = chapter_data.borrow_object()?;
-            chapter_list.push(parse_chapter(chapter_data)?);
+            chapter_list.push(chapter_data.parse_chapter()?);
         }
 
         let mut offset = limit;
@@ -214,7 +213,7 @@ impl Guest for Component {
 
             for chapter_data in data {
                 let chapter_data = chapter_data.borrow_object()?;
-                chapter_list.push(parse_chapter(chapter_data)?);
+                chapter_list.push(chapter_data.parse_chapter()?);
             }
         }
 
