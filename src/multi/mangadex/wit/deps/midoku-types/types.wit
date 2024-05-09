@@ -8,7 +8,7 @@ interface chapter {
         chapter: f32,
 
         /// The date the chapter was last updated. This is a Unix timestamp in seconds.
-        data-updated: u32,
+        date-updated: u32,
         scanlator: string,
         url: string,
         language: string,

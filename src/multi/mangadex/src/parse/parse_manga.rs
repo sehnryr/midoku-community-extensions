@@ -4,26 +4,9 @@ use crate::bindings::exports::midoku::types::manga::{ContentRating, Manga, Readi
 use crate::utils::miniserde_trait::{BorrowType, GetType};
 use crate::{HOME_URL, LOCALE};
 
-pub fn parse_manga_id(manga_data: &miniserde_json::Object) -> Result<String, ()> {
-    manga_data.get_string("id").map(|id| id.to_string())
-}
+use super::parse_object_attribute;
 
-pub fn parse_manga_attribute(attributes: &miniserde_json::Object, key: &str) -> Result<String, ()> {
-    let locale: &str = &LOCALE;
-
-    let attribute_object = attributes.get_object(key)?;
-    let attribute = if attribute_object.contains_key(locale) {
-        attribute_object.get_string(locale)?
-    } else if !attribute_object.is_empty() {
-        let (_, attribute_value) = attribute_object.first_key_value().ok_or(())?;
-        attribute_value.borrow_string()?
-    } else {
-        return Ok(String::new());
-    };
-    Ok(attribute.to_string())
-}
-
-pub fn parse_manga_status(status: &str) -> Status {
+fn parse_manga_status(status: &str) -> Status {
     match status {
         "ongoing" => Status::Ongoing,
         "completed" => Status::Completed,
@@ -33,7 +16,7 @@ pub fn parse_manga_status(status: &str) -> Status {
     }
 }
 
-pub fn parse_manga_content_rating(content_rating: &str) -> ContentRating {
+fn parse_manga_content_rating(content_rating: &str) -> ContentRating {
     match content_rating {
         "safe" => ContentRating::Safe,
         "suggestive" => ContentRating::Suggestive,
@@ -43,7 +26,7 @@ pub fn parse_manga_content_rating(content_rating: &str) -> ContentRating {
     }
 }
 
-pub fn parse_manga_reading_mode(reading_mode: &str) -> ReadingMode {
+fn parse_manga_reading_mode(reading_mode: &str) -> ReadingMode {
     match reading_mode {
         "ja" => ReadingMode::RightToLeft,
         "zh" => ReadingMode::Scroll,
@@ -55,8 +38,8 @@ pub fn parse_manga_reading_mode(reading_mode: &str) -> ReadingMode {
 pub fn parse_partial_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
     let attributes = manga_data.get_object("attributes")?;
 
-    let id = parse_manga_id(manga_data)?;
-    let title = parse_manga_attribute(attributes, "title")?;
+    let id = manga_data.get_string("id")?.clone();
+    let title = parse_object_attribute(attributes, "title")?;
 
     let mut cover_file = String::new();
 
@@ -99,10 +82,10 @@ pub fn parse_manga(manga_data: &miniserde_json::Object) -> Result<Manga, ()> {
 
     let attributes = manga_data.get_object("attributes")?;
 
-    let id = parse_manga_id(manga_data)?;
-    let title = parse_manga_attribute(attributes, "title")?;
+    let id = manga_data.get_string("id")?.clone();
+    let title = parse_object_attribute(attributes, "title")?;
     let url = format!("{}/title/{}", HOME_URL, id);
-    let description = parse_manga_attribute(attributes, "description")?;
+    let description = parse_object_attribute(attributes, "description")?;
 
     let mut cover_file = String::new();
     let mut author_name = String::new();

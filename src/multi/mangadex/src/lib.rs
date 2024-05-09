@@ -1,3 +1,4 @@
+mod parse;
 mod utils;
 
 use miniserde::json as miniserde_json;
@@ -14,18 +15,18 @@ use bindings::exports::midoku::types::page::Page;
 use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
+use crate::parse::parse_chapter::parse_chapter;
+use crate::parse::parse_manga::{parse_manga, parse_partial_manga};
 use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
-use crate::utils::parse::{parse_manga, parse_partial_manga};
 use crate::utils::url_encode::url_encode;
 
 const API_URL: &str = "https://api.mangadex.org";
 const HOME_URL: &str = "https://mangadex.org";
 
-static LOCALE: Lazy<&str> = Lazy::new(|| {
-    // TODO: Get the locale from the host
-
-    "en"
-});
+// TODO: Get the config from the host
+static USER_AGENT: Lazy<&str> = Lazy::new(|| "Midoku");
+static LOCALE: Lazy<&str> = Lazy::new(|| "en");
+static LANGUAGES: Lazy<Vec<&str>> = Lazy::new(|| vec!["en"]);
 
 struct Component;
 
@@ -36,7 +37,9 @@ impl Guest for Component {
         set_period_ms(1000)?;
 
         // First access the lazy static variable to initialize it
+        let _user_agent: &str = &USER_AGENT;
         let _locale: &str = &LOCALE;
+        let _languages: Vec<&str> = LANGUAGES.clone();
 
         Ok(())
     }
@@ -77,7 +80,7 @@ impl Guest for Component {
             }
         }
 
-        let headers = vec![("User-Agent".to_string(), "Midoku".to_string())];
+        let headers = vec![("User-Agent".to_string(), USER_AGENT.to_string())];
         let response = handle(Method::Get, &url, Some(&headers), None)?;
 
         let bytes = response.bytes();
@@ -118,7 +121,7 @@ impl Guest for Component {
             API_URL, manga_id,
         );
 
-        let headers = vec![("User-Agent".to_string(), "Midoku".to_string())];
+        let headers = vec![("User-Agent".to_string(), USER_AGENT.to_string())];
         let response = handle(Method::Get, &url, Some(&headers), None)?;
 
         let bytes = response.bytes();
@@ -136,7 +139,86 @@ impl Guest for Component {
     }
 
     fn get_chapter_list(manga_id: String) -> Result<Vec<Chapter>, ()> {
-        todo!("Get chapter list not implemented")
+        // Block until the rate limiter allows the request
+        block();
+
+        let limit = 500;
+
+        let mut url = format!(
+            "{}/manga/{}/feed\
+                ?limit={}\
+                &order[volume]=asc\
+                &order[chapter]=asc\
+                &contentRating[]=safe\
+                &contentRating[]=suggestive\
+                &contentRating[]=erotica\
+                &contentRating[]=pornographic\
+                &includes[]=user\
+                &includes[]=scanlation_group",
+            API_URL, manga_id, limit
+        );
+
+        for language in LANGUAGES.iter() {
+            url.push_str(&format!("&translatedLanguage[]={}", language));
+        }
+
+        // TODO: Add the ability to filter out blocked groups and uploaders
+
+        let headers = vec![("User-Agent".to_string(), USER_AGENT.to_string())];
+        let response = handle(Method::Get, &url, Some(&headers), None)?;
+
+        let bytes = response.bytes();
+        let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
+
+        // Parse the JSON response
+        let json = miniserde_json::from_str::<miniserde_json::Value>(&content)
+            .map_err(|_| ())?
+            .take_object()?;
+
+        // Get the data field from the JSON response
+        let data = json.get_array("data")?;
+
+        // Get the total number of chapters
+        let total = match json.get_number("total")? {
+            miniserde_json::Number::U64(n) => n.clone() as u32,
+            _ => return Err(()),
+        };
+
+        let mut chapter_list = Vec::with_capacity(total as usize);
+        for chapter_data in data {
+            let chapter_data = chapter_data.borrow_object()?;
+            chapter_list.push(parse_chapter(chapter_data)?);
+        }
+
+        let mut offset = limit;
+        while offset < total {
+            offset += limit;
+
+            let response = handle(
+                Method::Get,
+                &format!("{}&offset={}", url, offset),
+                Some(&headers),
+                None,
+            )?;
+
+            let bytes = response.bytes();
+            let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
+
+            // Parse the JSON response
+            let json = miniserde_json::from_str::<miniserde_json::Value>(&content)
+                .map_err(|_| ())?
+                .take_object()?;
+
+            // Get the data field from the JSON response
+            let data = json.get_array("data")?;
+
+            for chapter_data in data {
+                let chapter_data = chapter_data.borrow_object()?;
+                chapter_list.push(parse_chapter(chapter_data)?);
+            }
+        }
+
+        Ok(chapter_list)
     }
 
     fn get_page_list(manga_id: String, chapter_id: String) -> Result<Vec<Page>, ()> {

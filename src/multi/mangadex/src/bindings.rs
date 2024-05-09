@@ -985,7 +985,7 @@ pub mod exports {
                             for (i, e) in vec9.into_iter().enumerate() {
                                 let base = result9.add(i * 52);
                                 {
-                                    let super::super::super::super::exports::midoku::types::chapter::Chapter{ id:id3, title:title3, volume:volume3, chapter:chapter3, data_updated:data_updated3, scanlator:scanlator3, url:url3, language:language3, } = e;
+                                    let super::super::super::super::exports::midoku::types::chapter::Chapter{ id:id3, title:title3, volume:volume3, chapter:chapter3, date_updated:date_updated3, scanlator:scanlator3, url:url3, language:language3, } = e;
                                     let vec4 = (id3.into_bytes()).into_boxed_slice();
                                     let ptr4 = vec4.as_ptr().cast::<u8>();
                                     let len4 = vec4.len();
@@ -1000,7 +1000,7 @@ pub mod exports {
                                     *base.add(8).cast::<*mut u8>() = ptr5.cast_mut();
                                     *base.add(16).cast::<f32>() = _rt::as_f32(volume3);
                                     *base.add(20).cast::<f32>() = _rt::as_f32(chapter3);
-                                    *base.add(24).cast::<i32>() = _rt::as_i32(data_updated3);
+                                    *base.add(24).cast::<i32>() = _rt::as_i32(date_updated3);
                                     let vec6 = (scanlator3.into_bytes()).into_boxed_slice();
                                     let ptr6 = vec6.as_ptr().cast::<u8>();
                                     let len6 = vec6.len();
@@ -1256,7 +1256,7 @@ pub mod exports {
                     pub volume: f32,
                     pub chapter: f32,
                     /// The date the chapter was last updated. This is a Unix timestamp in seconds.
-                    pub data_updated: u32,
+                    pub date_updated: u32,
                     pub scanlator: _rt::String,
                     pub url: _rt::String,
                     pub language: _rt::String,
@@ -1268,7 +1268,7 @@ pub mod exports {
                             .field("title", &self.title)
                             .field("volume", &self.volume)
                             .field("chapter", &self.chapter)
-                            .field("data-updated", &self.data_updated)
+                            .field("date-updated", &self.date_updated)
                             .field("scanlator", &self.scanlator)
                             .field("url", &self.url)
                             .field("language", &self.language)
@@ -1830,7 +1830,7 @@ ky\x01@\0\0\0\x04\0\x05burst\x01\x01\x04\0\x09period-ms\x01\x01\x01j\0\0\x01@\x0
 \x05bursty\0\x02\x04\0\x09set-burst\x01\x03\x01@\x01\x09period-msy\0\x02\x04\0\x0d\
 set-period-ms\x01\x04\x01@\0\0\x7f\x04\0\x05ready\x01\x05\x01@\0\x01\0\x04\0\x05\
 block\x01\x06\x03\x01!midoku:limiter/rate-limiter@0.1.0\x05\x04\x01B\x02\x01r\x08\
-\x02ids\x05titles\x06volumev\x07chapterv\x0cdata-updatedy\x09scanlators\x03urls\x08\
+\x02ids\x05titles\x06volumev\x07chapterv\x0cdate-updatedy\x09scanlators\x03urls\x08\
 languages\x04\0\x07chapter\x03\0\0\x04\x01\x1amidoku:types/chapter@0.1.0\x05\x05\
 \x01B\x06\x01r\x01\x05querys\x04\0\x0cfilter-title\x03\0\0\x01r\x02\x0coption-in\
 dexy\x0foption-reversed\x7f\x04\0\x0bfilter-sort\x03\0\x02\x01q\x02\x05title\x01\
