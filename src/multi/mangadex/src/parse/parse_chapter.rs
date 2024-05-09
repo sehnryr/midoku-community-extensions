@@ -1,5 +1,5 @@
-use chrono::DateTime;
 use miniserde::json as miniserde_json;
+use speedate::DateTime;
 
 use crate::bindings::exports::midoku::types::chapter::Chapter;
 use crate::utils::miniserde_trait::{BorrowType, GetType};
@@ -49,7 +49,7 @@ fn parse_chapter(chapter_data: &miniserde_json::Object) -> Result<Chapter, ()> {
     let volume: f32 = volume.parse().unwrap_or(-1.0);
     let chapter: f32 = chapter.parse().unwrap_or(-1.0);
 
-    let date_updated = DateTime::parse_from_rfc3339(&date_updated)
+    let date_updated = DateTime::parse_str_rfc3339(&date_updated)
         .map_err(|_| ())?
         .timestamp() as u32;
 
