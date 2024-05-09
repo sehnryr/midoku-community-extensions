@@ -544,6 +544,227 @@ pub mod midoku {
             }
         }
     }
+    #[allow(dead_code)]
+    pub mod settings {
+        #[allow(dead_code, clippy::all)]
+        pub mod settings {
+            #[used]
+            #[doc(hidden)]
+            #[cfg(target_arch = "wasm32")]
+            static __FORCE_SECTION_REF: fn() =
+                super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            /// Represents an arbitrary number.
+            #[derive(Clone, Copy)]
+            pub enum Number {
+                S64(i64),
+                U64(u64),
+                F64(f64),
+            }
+            impl ::core::fmt::Debug for Number {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    match self {
+                        Number::S64(e) => f.debug_tuple("Number::S64").field(e).finish(),
+                        Number::U64(e) => f.debug_tuple("Number::U64").field(e).finish(),
+                        Number::F64(e) => f.debug_tuple("Number::F64").field(e).finish(),
+                    }
+                }
+            }
+            /// Represents an arbitrary value.
+            #[derive(Clone)]
+            pub enum Value {
+                Bool(bool),
+                Number(Number),
+                String(_rt::String),
+                /// Represents an array of strings.
+                Array(_rt::Vec<_rt::String>),
+                /// Represents a map with string keys and string values.
+                Map(_rt::Vec<(_rt::String, _rt::String)>),
+            }
+            impl ::core::fmt::Debug for Value {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    match self {
+                        Value::Bool(e) => f.debug_tuple("Value::Bool").field(e).finish(),
+                        Value::Number(e) => f.debug_tuple("Value::Number").field(e).finish(),
+                        Value::String(e) => f.debug_tuple("Value::String").field(e).finish(),
+                        Value::Array(e) => f.debug_tuple("Value::Array").field(e).finish(),
+                        Value::Map(e) => f.debug_tuple("Value::Map").field(e).finish(),
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Get the value of a setting from the host.
+            pub fn get(key: &str) -> Result<Value, ()> {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 32]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 32]);
+                    let vec0 = key;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "midoku:settings/settings@0.1.0")]
+                    extern "C" {
+                        #[link_name = "get"]
+                        fn wit_import(_: *mut u8, _: usize, _: *mut u8);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0.cast_mut(), len0, ptr1);
+                    let l2 = i32::from(*ptr1.add(0).cast::<u8>());
+                    match l2 {
+                        0 => {
+                            let e = {
+                                let l3 = i32::from(*ptr1.add(8).cast::<u8>());
+                                let v28 = match l3 {
+                                    0 => {
+                                        let e28 = {
+                                            let l4 = i32::from(*ptr1.add(16).cast::<u8>());
+
+                                            _rt::bool_lift(l4 as u8)
+                                        };
+                                        Value::Bool(e28)
+                                    }
+                                    1 => {
+                                        let e28 = {
+                                            let l5 = i32::from(*ptr1.add(16).cast::<u8>());
+                                            let v9 = match l5 {
+                                                0 => {
+                                                    let e9 = {
+                                                        let l6 = *ptr1.add(24).cast::<i64>();
+
+                                                        l6
+                                                    };
+                                                    Number::S64(e9)
+                                                }
+                                                1 => {
+                                                    let e9 = {
+                                                        let l7 = *ptr1.add(24).cast::<i64>();
+
+                                                        l7 as u64
+                                                    };
+                                                    Number::U64(e9)
+                                                }
+                                                n => {
+                                                    debug_assert_eq!(
+                                                        n, 2,
+                                                        "invalid enum discriminant"
+                                                    );
+                                                    let e9 = {
+                                                        let l8 = *ptr1.add(24).cast::<f64>();
+
+                                                        l8
+                                                    };
+                                                    Number::F64(e9)
+                                                }
+                                            };
+
+                                            v9
+                                        };
+                                        Value::Number(e28)
+                                    }
+                                    2 => {
+                                        let e28 = {
+                                            let l10 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l11 = *ptr1.add(20).cast::<usize>();
+                                            let len12 = l11;
+                                            let bytes12 =
+                                                _rt::Vec::from_raw_parts(l10.cast(), len12, len12);
+
+                                            _rt::string_lift(bytes12)
+                                        };
+                                        Value::String(e28)
+                                    }
+                                    3 => {
+                                        let e28 = {
+                                            let l13 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l14 = *ptr1.add(20).cast::<usize>();
+                                            let base18 = l13;
+                                            let len18 = l14;
+                                            let mut result18 = _rt::Vec::with_capacity(len18);
+                                            for i in 0..len18 {
+                                                let base = base18.add(i * 8);
+                                                let e18 = {
+                                                    let l15 = *base.add(0).cast::<*mut u8>();
+                                                    let l16 = *base.add(4).cast::<usize>();
+                                                    let len17 = l16;
+                                                    let bytes17 = _rt::Vec::from_raw_parts(
+                                                        l15.cast(),
+                                                        len17,
+                                                        len17,
+                                                    );
+
+                                                    _rt::string_lift(bytes17)
+                                                };
+                                                result18.push(e18);
+                                            }
+                                            _rt::cabi_dealloc(base18, len18 * 8, 4);
+
+                                            result18
+                                        };
+                                        Value::Array(e28)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 4, "invalid enum discriminant");
+                                        let e28 = {
+                                            let l19 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l20 = *ptr1.add(20).cast::<usize>();
+                                            let base27 = l19;
+                                            let len27 = l20;
+                                            let mut result27 = _rt::Vec::with_capacity(len27);
+                                            for i in 0..len27 {
+                                                let base = base27.add(i * 16);
+                                                let e27 = {
+                                                    let l21 = *base.add(0).cast::<*mut u8>();
+                                                    let l22 = *base.add(4).cast::<usize>();
+                                                    let len23 = l22;
+                                                    let bytes23 = _rt::Vec::from_raw_parts(
+                                                        l21.cast(),
+                                                        len23,
+                                                        len23,
+                                                    );
+                                                    let l24 = *base.add(8).cast::<*mut u8>();
+                                                    let l25 = *base.add(12).cast::<usize>();
+                                                    let len26 = l25;
+                                                    let bytes26 = _rt::Vec::from_raw_parts(
+                                                        l24.cast(),
+                                                        len26,
+                                                        len26,
+                                                    );
+
+                                                    (
+                                                        _rt::string_lift(bytes23),
+                                                        _rt::string_lift(bytes26),
+                                                    )
+                                                };
+                                                result27.push(e27);
+                                            }
+                                            _rt::cabi_dealloc(base27, len27 * 16, 4);
+
+                                            result27
+                                        };
+                                        Value::Map(e28)
+                                    }
+                                };
+
+                                v28
+                            };
+                            Ok(e)
+                        }
+                        1 => {
+                            let e = ();
+                            Err(e)
+                        }
+                        _ => _rt::invalid_enum_discriminant(),
+                    }
+                }
+            }
+        }
+    }
 }
 #[allow(dead_code)]
 pub mod exports {
@@ -1814,9 +2035,9 @@ pub(crate) use __export_endpoints_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.24.0:endpoints:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1815] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x97\x0d\x01A\x02\x01\
-A\x16\x01B\x0d\x01m\x05\x03get\x04post\x03put\x04head\x06delete\x04\0\x06method\x03\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1981] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xbd\x0e\x01A\x02\x01\
+A\x18\x01B\x0d\x01m\x05\x03get\x04post\x03put\x04head\x06delete\x04\0\x06method\x03\
 \0\0\x04\0\x11incoming-response\x03\x01\x01h\x02\x01@\x01\x04self\x03\0{\x04\0%[\
 method]incoming-response.status-code\x01\x04\x01o\x02ss\x01p\x05\x01@\x01\x04sel\
 f\x03\0\x06\x04\0![method]incoming-response.headers\x01\x07\x01p}\x01@\x01\x04se\
@@ -1829,32 +2050,37 @@ j\x01\x09\0\x01@\x04\x06method\x01\x03urls\x07headers\x06\x04body\x08\0\x0a\x04\
 ky\x01@\0\0\0\x04\0\x05burst\x01\x01\x04\0\x09period-ms\x01\x01\x01j\0\0\x01@\x01\
 \x05bursty\0\x02\x04\0\x09set-burst\x01\x03\x01@\x01\x09period-msy\0\x02\x04\0\x0d\
 set-period-ms\x01\x04\x01@\0\0\x7f\x04\0\x05ready\x01\x05\x01@\0\x01\0\x04\0\x05\
-block\x01\x06\x03\x01!midoku:limiter/rate-limiter@0.1.0\x05\x04\x01B\x02\x01r\x08\
-\x02ids\x05titles\x06volumev\x07chapterv\x0cdate-updatedy\x09scanlators\x03urls\x08\
-languages\x04\0\x07chapter\x03\0\0\x04\x01\x1amidoku:types/chapter@0.1.0\x05\x05\
-\x01B\x06\x01r\x01\x05querys\x04\0\x0cfilter-title\x03\0\0\x01r\x02\x0coption-in\
-dexy\x0foption-reversed\x7f\x04\0\x0bfilter-sort\x03\0\x02\x01q\x02\x05title\x01\
-\x01\0\x04sort\x01\x03\0\x04\0\x06filter\x03\0\x04\x04\x01\x19midoku:types/filte\
-r@0.1.0\x05\x06\x01B\x09\x01m\x05\x07unknown\x07ongoing\x09completed\x06hiatus\x09\
-cancelled\x04\0\x06status\x03\0\0\x01m\x03\x04safe\x0asuggestive\x04nsfw\x04\0\x0e\
-content-rating\x03\0\x02\x01m\x04\x0dright-to-left\x0dleft-to-right\x08vertical\x06\
-scroll\x04\0\x0creading-mode\x03\0\x04\x01ps\x01r\x0b\x02ids\x05titles\x03urls\x0b\
-descriptions\x09cover-urls\x0bauthor-names\x0bartist-names\x0acategories\x06\x06\
-status\x01\x0econtent-rating\x03\x0creading-mode\x05\x04\0\x05manga\x03\0\x07\x04\
-\x01\x18midoku:types/manga@0.1.0\x05\x07\x01B\x03\x01p}\x01r\x03\x05indexy\x03ur\
-ls\x06base64\0\x04\0\x04page\x03\0\x01\x04\x01\x17midoku:types/page@0.1.0\x05\x08\
-\x02\x03\0\x03\x07chapter\x02\x03\0\x04\x06filter\x02\x03\0\x05\x05manga\x02\x03\
-\0\x06\x04page\x01B\x1c\x02\x03\x02\x01\x09\x04\0\x07chapter\x03\0\0\x02\x03\x02\
-\x01\x0a\x04\0\x06filter\x03\0\x02\x02\x03\x02\x01\x0b\x04\0\x05manga\x03\0\x04\x02\
-\x03\x02\x01\x0c\x04\0\x04page\x03\0\x06\x01j\0\0\x01@\0\0\x08\x04\0\x0ainitiali\
-ze\x01\x09\x01p\x03\x01p\x05\x01o\x02\x0b\x7f\x01j\x01\x0c\0\x01@\x02\x07filters\
-\x0a\x04pagey\0\x0d\x04\0\x0eget-manga-list\x01\x0e\x01j\x01\x05\0\x01@\x01\x08m\
-anga-ids\0\x0f\x04\0\x11get-manga-details\x01\x10\x01p\x01\x01j\x01\x11\0\x01@\x01\
-\x08manga-ids\0\x12\x04\0\x10get-chapter-list\x01\x13\x01p\x07\x01j\x01\x14\0\x01\
-@\x02\x08manga-ids\x0achapter-ids\0\x15\x04\0\x0dget-page-list\x01\x16\x04\x01\x19\
-midoku:bindings/api@0.1.0\x05\x0d\x04\x01,midoku:midoku-multi-mangadex/endpoints\
-@0.1.0\x04\0\x0b\x0f\x01\0\x09endpoints\x03\0\0\0G\x09producers\x01\x0cprocessed\
--by\x02\x0dwit-component\x070.202.0\x10wit-bindgen-rust\x060.24.0";
+block\x01\x06\x03\x01!midoku:limiter/rate-limiter@0.1.0\x05\x04\x01B\x0a\x01q\x03\
+\x03s64\x01x\0\x03u64\x01w\0\x03f64\x01u\0\x04\0\x06number\x03\0\0\x01ps\x01o\x02\
+ss\x01p\x03\x01q\x05\x04bool\x01\x7f\0\x06number\x01\x01\0\x06string\x01s\0\x05a\
+rray\x01\x02\0\x03map\x01\x04\0\x04\0\x05value\x03\0\x05\x01j\x01\x06\0\x01@\x01\
+\x03keys\0\x07\x04\0\x03get\x01\x08\x03\x01\x1emidoku:settings/settings@0.1.0\x05\
+\x05\x01B\x02\x01r\x08\x02ids\x05titles\x06volumev\x07chapterv\x0cdate-updatedy\x09\
+scanlators\x03urls\x08languages\x04\0\x07chapter\x03\0\0\x04\x01\x1amidoku:types\
+/chapter@0.1.0\x05\x06\x01B\x06\x01r\x01\x05querys\x04\0\x0cfilter-title\x03\0\0\
+\x01r\x02\x0coption-indexy\x0foption-reversed\x7f\x04\0\x0bfilter-sort\x03\0\x02\
+\x01q\x02\x05title\x01\x01\0\x04sort\x01\x03\0\x04\0\x06filter\x03\0\x04\x04\x01\
+\x19midoku:types/filter@0.1.0\x05\x07\x01B\x09\x01m\x05\x07unknown\x07ongoing\x09\
+completed\x06hiatus\x09cancelled\x04\0\x06status\x03\0\0\x01m\x03\x04safe\x0asug\
+gestive\x04nsfw\x04\0\x0econtent-rating\x03\0\x02\x01m\x04\x0dright-to-left\x0dl\
+eft-to-right\x08vertical\x06scroll\x04\0\x0creading-mode\x03\0\x04\x01ps\x01r\x0b\
+\x02ids\x05titles\x03urls\x0bdescriptions\x09cover-urls\x0bauthor-names\x0bartis\
+t-names\x0acategories\x06\x06status\x01\x0econtent-rating\x03\x0creading-mode\x05\
+\x04\0\x05manga\x03\0\x07\x04\x01\x18midoku:types/manga@0.1.0\x05\x08\x01B\x03\x01\
+p}\x01r\x03\x05indexy\x03urls\x06base64\0\x04\0\x04page\x03\0\x01\x04\x01\x17mid\
+oku:types/page@0.1.0\x05\x09\x02\x03\0\x04\x07chapter\x02\x03\0\x05\x06filter\x02\
+\x03\0\x06\x05manga\x02\x03\0\x07\x04page\x01B\x1c\x02\x03\x02\x01\x0a\x04\0\x07\
+chapter\x03\0\0\x02\x03\x02\x01\x0b\x04\0\x06filter\x03\0\x02\x02\x03\x02\x01\x0c\
+\x04\0\x05manga\x03\0\x04\x02\x03\x02\x01\x0d\x04\0\x04page\x03\0\x06\x01j\0\0\x01\
+@\0\0\x08\x04\0\x0ainitialize\x01\x09\x01p\x03\x01p\x05\x01o\x02\x0b\x7f\x01j\x01\
+\x0c\0\x01@\x02\x07filters\x0a\x04pagey\0\x0d\x04\0\x0eget-manga-list\x01\x0e\x01\
+j\x01\x05\0\x01@\x01\x08manga-ids\0\x0f\x04\0\x11get-manga-details\x01\x10\x01p\x01\
+\x01j\x01\x11\0\x01@\x01\x08manga-ids\0\x12\x04\0\x10get-chapter-list\x01\x13\x01\
+p\x07\x01j\x01\x14\0\x01@\x02\x08manga-ids\x0achapter-ids\0\x15\x04\0\x0dget-pag\
+e-list\x01\x16\x04\x01\x19midoku:bindings/api@0.1.0\x05\x0e\x04\x01,midoku:midok\
+u-multi-mangadex/endpoints@0.1.0\x04\0\x0b\x0f\x01\0\x09endpoints\x03\0\0\0G\x09\
+producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.202.0\x10wit-bindgen-rus\
+t\x060.24.0";
 
 #[inline(never)]
 #[doc(hidden)]

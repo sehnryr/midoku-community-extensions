@@ -1,3 +1,4 @@
+mod host_settings;
 mod schema;
 mod utils;
 
@@ -14,6 +15,7 @@ use bindings::exports::midoku::types::page::Page;
 use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
+use crate::host_settings::HostSettings;
 use crate::schema::chapter::ChapterResponseSchema;
 use crate::schema::manga::{MangaResponseSchema, MangaResponseSingleSchema};
 use crate::schema::page::PageResponseSchema;
@@ -21,13 +23,6 @@ use crate::utils::url_encode::url_encode;
 
 const API_URL: &str = "https://api.mangadex.org";
 const HOME_URL: &str = "https://mangadex.org";
-
-// TODO: Get the config from the host
-static USER_AGENT: &str = "Midoku";
-static LOCALE: &str = "en";
-static LANGUAGES: &[&str] = &["en"];
-static FORCE_PORT_443: bool = false;
-static DATA_SAVER: bool = false;
 
 struct Component;
 
@@ -81,7 +76,7 @@ impl Guest for Component {
             }
         }
 
-        let headers = vec![("User-Agent".to_string(), USER_AGENT.to_string())];
+        let headers = vec![("User-Agent".to_string(), HostSettings::get_user_agent())];
         let response = handle(Method::Get, &url, Some(&headers), None)?;
 
         let bytes = response.bytes();
@@ -114,7 +109,7 @@ impl Guest for Component {
             API_URL, manga_id,
         );
 
-        let headers = vec![("User-Agent".to_string(), USER_AGENT.to_string())];
+        let headers = vec![("User-Agent".to_string(), HostSettings::get_user_agent())];
         let response = handle(Method::Get, &url, Some(&headers), None)?;
 
         let bytes = response.bytes();
@@ -147,13 +142,13 @@ impl Guest for Component {
             API_URL, manga_id, limit
         );
 
-        for language in LANGUAGES.iter() {
+        for language in HostSettings::get_languages() {
             url.push_str(&format!("&translatedLanguage[]={}", language));
         }
 
         // TODO: Add the ability to filter out blocked groups and uploaders
 
-        let headers = vec![("User-Agent".to_string(), USER_AGENT.to_string())];
+        let headers = vec![("User-Agent".to_string(), HostSettings::get_user_agent())];
         let response = handle(Method::Get, &url, Some(&headers), None)?;
 
         let bytes = response.bytes();
@@ -201,10 +196,12 @@ impl Guest for Component {
         let url = format!(
             "{}/at-home/server/{}\
                 ?forcePort443={}",
-            API_URL, chapter_id, FORCE_PORT_443
+            API_URL,
+            chapter_id,
+            HostSettings::get_force_port_443()
         );
 
-        let headers = vec![("User-Agent".to_string(), USER_AGENT.to_string())];
+        let headers = vec![("User-Agent".to_string(), HostSettings::get_user_agent())];
         let response = handle(Method::Get, &url, Some(&headers), None)?;
 
         let bytes = response.bytes();

@@ -1,7 +1,7 @@
 use miniserde::Deserialize;
 
 use crate::bindings::exports::midoku::types::page::Page;
-use crate::DATA_SAVER;
+use crate::host_settings::HostSettings;
 
 #[derive(Debug, Deserialize)]
 pub struct PageResponseSchema {
@@ -20,14 +20,16 @@ pub struct PageChapterSchema {
 
 impl Into<Vec<Page>> for PageResponseSchema {
     fn into(self) -> Vec<Page> {
+        let data_saver = HostSettings::get_data_saver();
+
         let base_url = format!(
             "{}/{}/{}",
             self.base_url,
-            if DATA_SAVER { "data-saver" } else { "data" },
+            if data_saver { "data-saver" } else { "data" },
             self.chapter.hash
         );
 
-        let data = if DATA_SAVER {
+        let data = if data_saver {
             self.chapter.data_saver
         } else {
             self.chapter.data

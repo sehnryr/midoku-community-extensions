@@ -1,0 +1,30 @@
+package midoku:settings@0.1.0;
+
+interface settings {
+    /// Represents an arbitrary number.
+    variant number {
+        %s64(s64),
+        %u64(u64),
+        %f64(f64),
+    }
+
+    /// Represents an arbitrary value.
+    variant value {
+        %bool(bool),
+        %number(number),
+        %string(string),
+
+        /// Represents an array of strings.
+        %array(list<string>),
+
+        /// Represents a map with string keys and string values.
+        %map(list<tuple<string, string>>),
+    }
+
+    /// Get the value of a setting from the host.
+    get: func(key: string) -> result<value>;
+}
+
+world prelude {
+    import settings;
+}

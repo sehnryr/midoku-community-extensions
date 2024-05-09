@@ -22,4 +22,5 @@ package = "midoku:midoku-multi-mangadex"
 "midoku:bindings" = { path = "wit/deps/midoku-bindings" }
 "midoku:http" = { path = "wit/deps/midoku-http" }
 "midoku:limiter" = { path = "wit/deps/midoku-limiter" }
+"midoku:settings" = { path = "wit/deps/midoku-settings" }
 "midoku:types" = { path = "wit/deps/midoku-types" }

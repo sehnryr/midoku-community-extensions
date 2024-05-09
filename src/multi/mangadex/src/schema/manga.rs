@@ -1,7 +1,8 @@
 use miniserde::{json, Deserialize};
 
 use crate::bindings::exports::midoku::types::manga::{ContentRating, Manga, ReadingMode, Status};
-use crate::{HOME_URL, LOCALE};
+use crate::host_settings::HostSettings;
+use crate::HOME_URL;
 
 #[derive(Debug, Deserialize)]
 pub struct MangaResponseSchema {
@@ -84,14 +85,14 @@ impl TryInto<Manga> for MangaDataSchema {
     type Error = ();
 
     fn try_into(self) -> Result<Manga, Self::Error> {
-        let locale: &str = LOCALE;
+        let locale = HostSettings::get_locale();
 
         let id = self.id;
         let url = format!("{}/title/{}", HOME_URL, &id);
 
-        let title = object_get_string!(self.attributes.title, locale)?;
+        let title = object_get_string!(self.attributes.title, &locale)?;
         let description =
-            object_get_string!(self.attributes.description, locale).unwrap_or(String::new());
+            object_get_string!(self.attributes.description, &locale).unwrap_or(String::new());
 
         let mut cover_file = String::new();
         let mut author_name = String::new();
@@ -151,7 +152,7 @@ impl TryInto<Manga> for MangaDataSchema {
 
         let mut categories = Vec::with_capacity(self.attributes.tags.len());
         for tag in self.attributes.tags {
-            let name = object_get_string!(tag.attributes.name, locale)?;
+            let name = object_get_string!(tag.attributes.name, &locale)?;
             categories.push(name);
         }
 

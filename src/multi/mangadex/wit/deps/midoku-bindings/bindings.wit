@@ -41,6 +41,7 @@ world bindings {
     import midoku:http/outgoing-handler@0.1.0;
     import midoku:http/types@0.1.0;
     import midoku:limiter/rate-limiter@0.1.0;
+    import midoku:settings/settings@0.1.0;
 
     export midoku:types/chapter@0.1.0;
     export midoku:types/filter@0.1.0;
