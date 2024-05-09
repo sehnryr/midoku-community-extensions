@@ -1,5 +1,4 @@
 pub mod parse_chapter;
-pub mod parse_manga;
 
 use miniserde::json as miniserde_json;
 

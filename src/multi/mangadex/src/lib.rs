@@ -1,4 +1,5 @@
 mod parse;
+mod schema;
 mod utils;
 
 use miniserde::json as miniserde_json;
@@ -9,12 +10,13 @@ mod bindings;
 use bindings::exports::midoku::bindings::api::Guest;
 use bindings::exports::midoku::types::chapter::Chapter;
 use bindings::exports::midoku::types::filter::Filter;
-use bindings::exports::midoku::types::manga::{ContentRating, Manga, ReadingMode, Status};
+use bindings::exports::midoku::types::manga::Manga;
 use bindings::exports::midoku::types::page::Page;
 use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
-use crate::parse::{parse_chapter::ParseChapter, parse_manga::ParseManga};
+use crate::parse::parse_chapter::ParseChapter;
+use crate::schema::manga::{MangaResponseSchema, MangaResponseSingleSchema};
 use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
 use crate::utils::url_encode::url_encode;
 
@@ -42,11 +44,13 @@ impl Guest for Component {
         block();
 
         let limit = 20;
-        let offset = page * limit;
+        let offset = page as isize * limit;
 
         let mut url = format!(
             "{}/manga/\
                 ?includes[]=cover_art\
+                &includes[]=author\
+                &includes[]=artist\
                 &limit={}\
                 &offset={}",
             API_URL, limit, offset
@@ -83,27 +87,16 @@ impl Guest for Component {
         let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
 
         // Parse the JSON response
-        let json = miniserde_json::from_str::<miniserde_json::Value>(&content)
-            .map_err(|_| ())?
-            .take_object()?;
-
-        // Get the data field from the JSON response
-        let data = json.get_array("data")?;
+        let manga_response: MangaResponseSchema =
+            miniserde_json::from_str(&content).map_err(|_| ())?;
 
         // Parse the manga data
         let mut manga_list = Vec::new();
-        for manga_data in data {
-            let manga_data = manga_data.borrow_object()?;
-            manga_list.push(manga_data.parse_partial_manga()?);
+        for manga_data in manga_response.data {
+            manga_list.push(manga_data.try_into()?);
         }
 
-        // Get the total number of manga
-        let total = match json.get_number("total")? {
-            miniserde_json::Number::U64(n) => n.clone() as u32,
-            _ => return Err(()),
-        };
-
-        let has_next = (offset + limit) < total;
+        let has_next = (offset + limit) < manga_response.total;
 
         Ok((manga_list, has_next))
     }
@@ -127,14 +120,10 @@ impl Guest for Component {
         let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
 
         // Parse the JSON response
-        let json = miniserde_json::from_str::<miniserde_json::Value>(&content)
-            .map_err(|_| ())?
-            .take_object()?;
+        let manga_response: MangaResponseSingleSchema =
+            miniserde_json::from_str(&content).map_err(|_| ())?;
 
-        // Get the data field from the JSON response
-        let manga_data = json.get_object("data")?;
-
-        Ok(manga_data.parse_manga()?)
+        Ok(manga_response.data.try_into()?)
     }
 
     fn get_chapter_list(manga_id: String) -> Result<Vec<Chapter>, ()> {
@@ -226,41 +215,3 @@ impl Guest for Component {
 }
 
 bindings::export!(Component with_types_in bindings);
-
-// Implement the default trait for the types
-
-impl Default for Status {
-    fn default() -> Self {
-        Status::Unknown
-    }
-}
-
-impl Default for ContentRating {
-    fn default() -> Self {
-        ContentRating::Safe
-    }
-}
-
-impl Default for ReadingMode {
-    fn default() -> Self {
-        ReadingMode::RightToLeft
-    }
-}
-
-impl Default for Manga {
-    fn default() -> Self {
-        Manga {
-            id: Default::default(),
-            title: Default::default(),
-            cover_url: Default::default(),
-            url: Default::default(),
-            description: Default::default(),
-            author_name: Default::default(),
-            artist_name: Default::default(),
-            categories: Default::default(),
-            status: Default::default(),
-            content_rating: Default::default(),
-            reading_mode: Default::default(),
-        }
-    }
-}
