@@ -121,10 +121,17 @@ impl TryInto<Manga> for MangaDataSchema {
             }
         }
 
+        let cover_quality = match HostSettings::get_cover_quality() {
+            0 => "",
+            1 => ".512.jpg",
+            2 => ".256.jpg",
+            _ => "",
+        };
+
         let cover_url = if cover_file.is_empty() {
             Default::default()
         } else {
-            format!("{}/covers/{}/{}", HOME_URL, id, cover_file)
+            format!("{}/covers/{}/{}{}", HOME_URL, id, cover_file, cover_quality)
         };
 
         let status = match self.attributes.status.as_str() {

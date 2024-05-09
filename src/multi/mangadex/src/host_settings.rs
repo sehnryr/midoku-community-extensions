@@ -1,4 +1,4 @@
-use crate::bindings::midoku::settings::settings::{get, Value};
+use crate::bindings::midoku::settings::settings::{get, Number, Value};
 
 pub struct HostSettings;
 
@@ -21,6 +21,13 @@ impl HostSettings {
         match get("languages") {
             Ok(Value::Array(value)) => value,
             _ => vec![String::from("en")],
+        }
+    }
+
+    pub fn get_cover_quality() -> u64 {
+        match get("cover_quality") {
+            Ok(Value::Number(Number::U64(value))) => value,
+            _ => 0,
         }
     }
 
