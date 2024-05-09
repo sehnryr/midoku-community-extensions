@@ -1,11 +1,10 @@
-[
-    {
-        "type": "title"
+{
+    "title": {
+        "type": "text"
     },
-    {
-        "type": "sort",
-        "name": "Sort",
-        "canBeReversed": true,
+    "sortBy": {
+        "type": "select",
+        "label": "Sort By",
         "options": [
             "Latest Chapter",
             "Relevance",
@@ -17,4 +16,4 @@
         "defaultOptionIndex": 0,
         "defaultOptionReversed": false
     }
-]
+}
