@@ -51,7 +51,17 @@ pub struct MangaRelationshipSchema {
     pub id: String,
     #[serde(rename = "type")]
     pub relationship_type: String,
-    pub attributes: Option<json::Object>,
+    pub attributes: Option<MangaRelationshipAttributesSchema>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MangaRelationshipAttributesSchema {
+    // For cover art, type is "cover_art"
+    #[serde(rename = "fileName")]
+    pub file_name: Option<String>,
+
+    // For authors and artists, type is "author" or "artist"
+    pub name: Option<String>,
 }
 
 #[doc(hidden)]
@@ -98,13 +108,13 @@ impl TryInto<Manga> for MangaDataSchema {
 
             match relationship.relationship_type.as_str() {
                 "cover_art" => {
-                    cover_file = object_get_string!(relationship_attributes, "fileName")?;
+                    cover_file = relationship_attributes.file_name.unwrap();
                 }
                 "author" => {
-                    author_name = object_get_string!(relationship_attributes, "name")?;
+                    author_name = relationship_attributes.name.unwrap();
                 }
                 "artist" => {
-                    artist_name = object_get_string!(relationship_attributes, "name")?;
+                    artist_name = relationship_attributes.name.unwrap();
                 }
                 _ => continue,
             }
