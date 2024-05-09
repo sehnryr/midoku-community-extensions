@@ -1,0 +1,27 @@
+[package]
+name = "midoku-multi-mangadex"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+miniserde = "0.1.39"
+speedate = "0.14.0"
+wit-bindgen-rt = { version = "0.24.0", features = ["bitflags"] }
+
+[build-dependencies]
+serde = { version = "1.0.201", features = ["derive"] }
+serde_json = "1.0.117"
+
+[lib]
+crate-type = ["cdylib"]
+
+[package.metadata.component]
+package = "midoku:midoku-multi-mangadex"
+
+[package.metadata.component.target.dependencies]
+"midoku:bindings" = { path = "wit/deps/midoku-bindings" }
+"midoku:http" = { path = "wit/deps/midoku-http" }
+"midoku:limiter" = { path = "wit/deps/midoku-limiter" }
+"midoku:settings" = { path = "wit/deps/midoku-settings" }
+"midoku:types" = { path = "wit/deps/midoku-types" }

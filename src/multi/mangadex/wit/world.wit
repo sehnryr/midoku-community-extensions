@@ -1,0 +1,5 @@
+package midoku:midoku-multi-mangadex@0.1.0;
+
+world endpoints {
+    include midoku:bindings/bindings@0.1.0;
+}

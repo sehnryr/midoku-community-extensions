@@ -1,0 +1,7 @@
+{
+    "name": "MangaDex",
+    "language": "multi",
+    "version": "0.1.0",
+    "url": "https://mangadex.org",
+    "nsfw": true
+}

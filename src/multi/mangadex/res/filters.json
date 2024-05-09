@@ -1,0 +1,19 @@
+{
+    "title": {
+        "type": "text"
+    },
+    "sortBy": {
+        "type": "select",
+        "label": "Sort By",
+        "options": [
+            "Latest Chapter",
+            "Relevance",
+            "Follows",
+            "Created Date",
+            "Last Updated",
+            "Title"
+        ],
+        "defaultOptionIndex": 0,
+        "defaultOptionReversed": false
+    }
+}

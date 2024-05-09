@@ -1,0 +1,50 @@
+package midoku:http@0.1.0;
+
+interface types {
+    /// Represents an HTTP method.
+    enum method {
+        get,
+        post,
+        put,
+        head,
+        delete,
+    }
+
+    /// Represents a response from an HTTP request.
+    resource incoming-response {
+        /// Returns the status code of the response.
+        status-code: func() -> u16;
+
+        /// Returns the headers of the response.
+        headers: func() -> list<tuple<string, string>>;
+
+        /// Returns the bytes of the response.
+        bytes: func() -> list<u8>;
+    }
+}
+
+interface outgoing-handler {
+    use types.{method, incoming-response};
+
+    /// Sends an HTTP request.
+    /// 
+    /// The `url` must be a valid URL.
+    /// 
+    /// The `headers` must be a list of tuples where the first element is the
+    /// header name and the second element is the header value.
+    /// 
+    /// The `body` must be a list of bytes.
+    /// 
+    /// Returns the response from the server.
+    handle: func(
+        method: method,
+        url: string,
+        headers: option<list<tuple<string, string>>>,
+        body: option<list<u8>>
+    ) -> result<incoming-response>;
+}
+
+world proxy {
+    // export types;
+    export outgoing-handler;
+}

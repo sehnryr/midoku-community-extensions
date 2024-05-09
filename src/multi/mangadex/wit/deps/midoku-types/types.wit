@@ -1,0 +1,91 @@
+package midoku:types@0.1.0;
+
+interface chapter {
+    record chapter {
+        id: string,
+        title: string,
+        volume: f32,
+        chapter: f32,
+
+        /// The date the chapter was last updated. This is a Unix timestamp in seconds.
+        date-updated: u32,
+        scanlator: string,
+        url: string,
+        language: string,
+    }
+}
+
+interface filter {
+    record filter-title {
+        query: string,
+    }
+
+    record filter-sort {
+        option-index: u32,
+
+        /// If true, the sort order is reversed.
+        ///
+        /// This is analogous to an ascending if true or descending if false sort
+        /// order.
+        option-reversed: bool,
+    }
+
+    variant filter {
+        title(filter-title),
+        sort(filter-sort),
+    }
+}
+
+interface manga {
+    enum status {
+        unknown,
+        ongoing,
+        completed,
+        hiatus,
+        cancelled,
+    }
+
+    enum content-rating {
+        safe,
+        suggestive,
+        nsfw,
+    }
+
+    enum reading-mode {
+        right-to-left,
+        left-to-right,
+        vertical,
+        scroll,
+    }
+
+    record manga {
+        id: string,
+        title: string,
+        url: string,
+        description: string,
+        cover-url: string,
+        author-name: string,
+        artist-name: string,
+        categories: list<string>,
+        status: status,
+        content-rating: content-rating,
+        reading-mode: reading-mode,
+    }
+}
+
+interface page {
+    record page {
+        index: u32,
+        url: string,
+
+        /// The base64-encoded data of the page.
+        base64: list<u8>,
+    }
+}
+
+world types {
+    export chapter;
+    export filter;
+    export manga;
+    export page;
+}
