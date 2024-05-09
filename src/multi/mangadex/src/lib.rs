@@ -1,4 +1,3 @@
-mod parse;
 mod schema;
 mod utils;
 
@@ -15,9 +14,8 @@ use bindings::exports::midoku::types::page::Page;
 use bindings::midoku::http::outgoing_handler::{handle, Method};
 use bindings::midoku::limiter::rate_limiter::{block, set_burst, set_period_ms};
 
-use crate::parse::parse_chapter::ParseChapter;
+use crate::schema::chapter::ChapterResponseSchema;
 use crate::schema::manga::{MangaResponseSchema, MangaResponseSingleSchema};
-use crate::utils::miniserde_trait::{BorrowType, GetType, TakeType};
 use crate::utils::url_encode::url_encode;
 
 const API_URL: &str = "https://api.mangadex.org";
@@ -159,27 +157,16 @@ impl Guest for Component {
         let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
 
         // Parse the JSON response
-        let json = miniserde_json::from_str::<miniserde_json::Value>(&content)
-            .map_err(|_| ())?
-            .take_object()?;
+        let chapter_response: ChapterResponseSchema =
+            miniserde_json::from_str(&content).map_err(|_| ())?;
 
-        // Get the data field from the JSON response
-        let data = json.get_array("data")?;
-
-        // Get the total number of chapters
-        let total = match json.get_number("total")? {
-            miniserde_json::Number::U64(n) => n.clone() as u32,
-            _ => return Err(()),
-        };
-
-        let mut chapter_list = Vec::with_capacity(total as usize);
-        for chapter_data in data {
-            let chapter_data = chapter_data.borrow_object()?;
-            chapter_list.push(chapter_data.parse_chapter()?);
+        let mut chapter_list = Vec::with_capacity(chapter_response.total as usize);
+        for chapter_data in chapter_response.data {
+            chapter_list.push(chapter_data.try_into()?);
         }
 
         let mut offset = limit;
-        while offset < total {
+        while offset < chapter_response.total {
             offset += limit;
 
             let response = handle(
@@ -193,16 +180,11 @@ impl Guest for Component {
             let content = std::str::from_utf8(&bytes).map_err(|_| ())?;
 
             // Parse the JSON response
-            let json = miniserde_json::from_str::<miniserde_json::Value>(&content)
-                .map_err(|_| ())?
-                .take_object()?;
+            let chapter_response: ChapterResponseSchema =
+                miniserde_json::from_str(&content).map_err(|_| ())?;
 
-            // Get the data field from the JSON response
-            let data = json.get_array("data")?;
-
-            for chapter_data in data {
-                let chapter_data = chapter_data.borrow_object()?;
-                chapter_list.push(chapter_data.parse_chapter()?);
+            for chapter_data in chapter_response.data {
+                chapter_list.push(chapter_data.try_into()?);
             }
         }
 
