@@ -2,7 +2,6 @@ mod parse;
 mod utils;
 
 use miniserde::json as miniserde_json;
-use once_cell::sync::Lazy;
 
 #[allow(warnings)]
 mod bindings;
@@ -23,9 +22,9 @@ const API_URL: &str = "https://api.mangadex.org";
 const HOME_URL: &str = "https://mangadex.org";
 
 // TODO: Get the config from the host
-static USER_AGENT: Lazy<&str> = Lazy::new(|| "Midoku");
-static LOCALE: Lazy<&str> = Lazy::new(|| "en");
-static LANGUAGES: Lazy<Vec<&str>> = Lazy::new(|| vec!["en"]);
+static USER_AGENT: &str = "Midoku";
+static LOCALE: &str = "en";
+static LANGUAGES: &[&str] = &["en"];
 
 struct Component;
 
@@ -34,11 +33,6 @@ impl Guest for Component {
         // Set the rate limiter to 3 requests per second
         set_burst(3)?;
         set_period_ms(1000)?;
-
-        // First access the lazy static variable to initialize it
-        let _user_agent: &str = &USER_AGENT;
-        let _locale: &str = &LOCALE;
-        let _languages: Vec<&str> = LANGUAGES.clone();
 
         Ok(())
     }
