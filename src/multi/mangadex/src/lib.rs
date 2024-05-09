@@ -146,7 +146,13 @@ impl Guest for Component {
             url.push_str(&format!("&translatedLanguage[]={}", language));
         }
 
-        // TODO: Add the ability to filter out blocked groups and uploaders
+        for group in HostSettings::get_blocked_groups() {
+            url.push_str(&format!("&excludedGroups[]={}", group));
+        }
+
+        for uploader in HostSettings::get_blocked_uploaders() {
+            url.push_str(&format!("&excludedUploaders[]={}", uploader));
+        }
 
         let headers = vec![("User-Agent".to_string(), HostSettings::get_user_agent())];
         let response = handle(Method::Get, &url, Some(&headers), None)?;

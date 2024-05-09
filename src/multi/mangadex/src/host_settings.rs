@@ -24,6 +24,20 @@ impl HostSettings {
         }
     }
 
+    pub fn get_blocked_groups() -> Vec<String> {
+        match get("blocked_groups") {
+            Ok(Value::Array(value)) => value,
+            _ => vec![],
+        }
+    }
+
+    pub fn get_blocked_uploaders() -> Vec<String> {
+        match get("blocked_uploaders") {
+            Ok(Value::Array(value)) => value,
+            _ => vec![],
+        }
+    }
+
     pub fn get_force_port_443() -> bool {
         match get("force_port_443") {
             Ok(Value::Bool(value)) => value,
