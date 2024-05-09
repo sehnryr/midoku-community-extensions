@@ -1,0 +1,11 @@
+[
+    {
+        "id": "multi.mangadex",
+        "name": "MangaDex",
+        "extension": "multi.mangadex-v0.1.0.mix",
+        "icon": "multi.mangadex.png",
+        "version": "0.1.0",
+        "language": "multi",
+        "nsfw": true
+    }
+]
