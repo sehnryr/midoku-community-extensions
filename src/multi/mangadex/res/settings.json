@@ -1,0 +1,43 @@
+{
+    "coverQuality": {
+        "type": "select",
+        "title": "Cover Quality",
+        "description": "Select the quality of the cover images",
+        "options": [
+            "Original",
+            "Medium",
+            "Low"
+        ],
+        "defaultOptionIndex": 0
+    },
+    "dataSaver": {
+        "type": "checkbox",
+        "title": "Data Saver",
+        "description": "Enable this to reduce data usage by loading lower quality images",
+        "default": false
+    },
+    "httpsPort": {
+        "type": "checkbox",
+        "title": "Use HTTPS port 443 only",
+        "description": "Prevent firewall restrictions on image servers",
+        "default": false
+    },
+    "userAgent": {
+        "type": "text",
+        "title": "User Agent",
+        "description": "Set the user agent for the requests",
+        "default": "Midoku"
+    },
+    "blockedGroups": {
+        "type": "text",
+        "title": "Blocked Groups",
+        "description": "Comma separated list of UUIDs of groups to block. Chapters translated by these groups will not be shown",
+        "default": ""
+    },
+    "blockedUploaders": {
+        "type": "text",
+        "title": "Blocked Uploaders",
+        "description": "Comma separated list of UUIDs of users to block. Chapters uploaded by these users will not be shown",
+        "default": ""
+    }
+}
