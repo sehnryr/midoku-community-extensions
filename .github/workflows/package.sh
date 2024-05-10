@@ -33,7 +33,8 @@ for package_dir in "$workspace_dir/src/*/*"; do
     packaged_name=${packaged_name/-/.}
 
     # Zip the extension and manifest
-    tar -czf "$gh_pages_dir/extensions/$packaged_name-v$package_version.mix" -C $package_dir/res .
+    tar --sort=name --owner=root:0 --group=root:0 --mtime='UTC 2024-01-01'\
+        -czf "$gh_pages_dir/extensions/$packaged_name-v$package_version.mix" -C $package_dir/res .
 
     # Copy the icon
     cp $package_dir/res/icon.png "$gh_pages_dir/icons/$packaged_name.png"
