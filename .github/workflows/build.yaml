@@ -15,17 +15,53 @@ concurrency:
 jobs:
   build:
     env:
-      SCCACHE_GHA_ENABLED: "true"
-      RUSTC_WRAPPER: "sccache"
+      CARGO_COMPONENT_VERSION: "0.11.0"
+      SCCACHE_CACHE_SIZE: "2G"
+      SCCACHE_VERSION: "0.8.0"
+      RUSTC_WRAPPER: "/usr/local/bin/sccache"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: mozilla-actions/sccache-action@v0.0.4
+      - name: Restore sccache cache
+        uses: actions/cache@v4
         with:
-          version: "v0.8.0"
+          path: ~/.cache/sccache
+          key: ${{ runner.os }}-sccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-sccache-
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Restore cargo cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install sccache
+        run: |
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            sccache_platform="x86_64-unknown-linux-musl"
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            sccache_platform="x86_64-apple-darwin"
+          elif [ "${{ runner.os }}" = "Windows" ]; then
+            sccache_platform="x86_64-pc-windows-msvc"
+          else
+            echo "Unsupported platform: ${{ runner.os }}"
+            exit 1
+          fi
+          sccache_file="sccache-v${SCCACHE_VERSION}-${sccache_platform}"
+          sccache_url="https://github.com/mozilla/sccache/releases/download/v${SCCACHE_VERSION}/${sccache_file}.tar.gz"
+          echo "URL=${sccache_url}"
+          curl -L "$sccache_url" | tar xz
+          mv -f "$sccache_file/sccache" "$RUSTC_WRAPPER"
+          chmod +x "$RUSTC_WRAPPER"
 
       - name: Install wasm32-unknown-unknown target
         uses: dtolnay/rust-toolchain@v1
@@ -34,13 +70,16 @@ jobs:
           targets: wasm32-unknown-unknown
 
       - name: Install cargo-component
-        run: cargo install cargo-component --locked --version 0.11.0
+        run: |
+          if ! command -v cargo-component || ! cargo-component --version | grep -q $CARGO_COMPONENT_VERSION; then
+            cargo install cargo-component --locked --version $CARGO_COMPONENT_VERSION --force
+          fi
 
       - name: Build extensions
         run: cargo component build --release --workspace --target wasm32-unknown-unknown
 
       - name: Package extensions
-        run: sh .github/workflows/package.sh
+        run: .github/workflows/package.sh
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -55,3 +94,6 @@ jobs:
           name: extensions
           path: gh-pages/extensions/*.mix
           if-no-files-found: ignore
+
+      - name: Show sccache statistics
+        run: $RUSTC_WRAPPER --show-stats
