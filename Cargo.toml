@@ -19,3 +19,7 @@ opt-level = "s"
 strip = true
 lto = true
 codegen-units = 1
+
+[workspace.dependencies]
+midoku-bindings = { git = "https://github.com/midokuapp/midoku-rs.git" }
+midoku-types = { git = "https://github.com/midokuapp/midoku-rs.git" }

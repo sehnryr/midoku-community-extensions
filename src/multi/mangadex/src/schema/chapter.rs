@@ -4,7 +4,7 @@ use speedate::DateTime;
 use crate::bindings::exports::midoku::types::chapter::Chapter;
 use crate::HOME_URL;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct ChapterResponseSchema {
     pub data: Vec<ChapterDataSchema>,
     pub limit: isize,
@@ -12,14 +12,14 @@ pub struct ChapterResponseSchema {
     pub total: isize,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct ChapterDataSchema {
     pub id: String,
     pub attributes: ChapterAttributesSchema,
     pub relationships: Vec<ChapterRelationshipSchema>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct ChapterAttributesSchema {
     pub title: Option<String>,
     pub chapter: Option<String>,
@@ -30,7 +30,7 @@ pub struct ChapterAttributesSchema {
     pub publish_at: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct ChapterRelationshipSchema {
     pub id: String,
     #[serde(rename = "type")]
@@ -38,7 +38,7 @@ pub struct ChapterRelationshipSchema {
     pub attributes: Option<ChapterRelationshipAttributesSchema>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct ChapterRelationshipAttributesSchema {
     // For scanlation groups, type is "scanlation_group"
     pub name: Option<String>,
@@ -108,5 +108,109 @@ impl TryInto<Chapter> for ChapterDataSchema {
             url,
             language,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_chapter_response_schema_deserialize() {
+        let chapter_response_schema = r#"{
+            "data": [
+                {
+                    "id": "id",
+                    "attributes": {
+                        "title": "title",
+                        "chapter": "chapter",
+                        "volume": "volume",
+                        "translatedLanguage": "en",
+                        "publishAt": "2024-01-01T00:00:00+00:00"
+                    },
+                    "relationships": [
+                        {
+                            "id": "id",
+                            "type": "scanlation_group",
+                            "attributes": {
+                                "name": "scanlator"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "limit": 1,
+            "offset": 0,
+            "total": 1
+        }"#;
+
+        let chapter_response_schema: ChapterResponseSchema =
+            miniserde::json::from_str(chapter_response_schema).unwrap();
+
+        let expected = ChapterResponseSchema {
+            data: vec![ChapterDataSchema {
+                id: "id".to_string(),
+                attributes: ChapterAttributesSchema {
+                    title: Some("title".to_string()),
+                    chapter: Some("chapter".to_string()),
+                    volume: Some("volume".to_string()),
+                    translated_language: "en".to_string(),
+                    publish_at: "2024-01-01T00:00:00+00:00".to_string(),
+                },
+                relationships: vec![ChapterRelationshipSchema {
+                    id: "id".to_string(),
+                    relationship_type: "scanlation_group".to_string(),
+                    attributes: Some(ChapterRelationshipAttributesSchema {
+                        name: Some("scanlator".to_string()),
+                        username: None,
+                    }),
+                }],
+            }],
+            limit: 1,
+            offset: 0,
+            total: 1,
+        };
+
+        assert_eq!(chapter_response_schema, expected);
+    }
+
+    #[test]
+    fn test_chapter_response_schema_into() {
+        let chapter_response_schema = ChapterResponseSchema {
+            data: vec![ChapterDataSchema {
+                id: "id".to_string(),
+                attributes: ChapterAttributesSchema {
+                    title: Some("title".to_string()),
+                    chapter: Some("chapter".to_string()),
+                    volume: Some("volume".to_string()),
+                    translated_language: "en".to_string(),
+                    publish_at: "2024-01-01T00:00:00+00:00".to_string(),
+                },
+                relationships: vec![ChapterRelationshipSchema {
+                    id: "id".to_string(),
+                    relationship_type: "scanlation_group".to_string(),
+                    attributes: Some(ChapterRelationshipAttributesSchema {
+                        name: Some("scanlator".to_string()),
+                        username: None,
+                    }),
+                }],
+            }],
+            limit: 1,
+            offset: 0,
+            total: 1,
+        };
+
+        for chapter_data_schema in chapter_response_schema.data {
+            let chapter: Chapter = chapter_data_schema.try_into().unwrap();
+
+            assert_eq!(chapter.id, "id");
+            assert_eq!(chapter.title, "title");
+            assert_eq!(chapter.volume, -1.0);
+            assert_eq!(chapter.chapter, -1.0);
+            assert_eq!(chapter.date_updated, 1704067200);
+            assert_eq!(chapter.scanlator, "scanlator");
+            assert_eq!(chapter.url, format!("{}/chapter/id", HOME_URL));
+            assert_eq!(chapter.language, "en");
+        }
     }
 }

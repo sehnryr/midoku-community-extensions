@@ -24,3 +24,18 @@ pub fn url_encode(s: &str) -> String {
     }
     encoded
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_url_encode() {
+        assert_eq!(url_encode("aA0-_.!~*'()"), "aA0-_.!~*'()");
+        assert_eq!(url_encode(" "), "%20");
+        assert_eq!(url_encode("%"), "%25");
+        assert_eq!(url_encode("&"), "%26");
+        assert_eq!(url_encode("+"), "%2B");
+        assert_eq!(url_encode("?"), "%3F");
+    }
+}
