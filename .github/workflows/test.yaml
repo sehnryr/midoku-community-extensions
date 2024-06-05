@@ -5,9 +5,7 @@ on:
     branches: ['main']
   pull_request:
     branches: ['main']
-    paths:
-      - 'src/**'
-      - '.github/workflows/test.yaml'
+
 
 concurrency:
   group: ${{ github.workflow }}
