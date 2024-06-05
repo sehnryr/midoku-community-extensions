@@ -101,7 +101,6 @@ jobs:
   build:
     name: Build extensions
     needs: rustfmt
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       CARGO_COMPONENT_VERSION: "0.11.0"
       SCCACHE_CACHE_SIZE: "2G"
