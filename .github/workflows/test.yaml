@@ -82,6 +82,10 @@ jobs:
         run: |
           changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           changed_packages_dir=$(echo "$changed_files" | grep -o '^src/[^/]*/[^/]*' | sort -u)
+          if [ -z "$changed_packages_dir" ]; then
+            echo "No packages to test"
+            exit 0
+          fi
           while read -r package_dir; do
             package_name=$(grep -oP -m 1 'name = "\K[^"]+' $package_dir/Cargo.toml)
             echo "Running tests for $package_name"
