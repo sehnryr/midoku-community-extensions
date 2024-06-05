@@ -1,9 +1,8 @@
 name: Test extensions
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    branches: ['main']
     paths:
       - 'src/**'
       - '.github/workflows/test.yaml'
