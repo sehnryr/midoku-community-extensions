@@ -18,6 +18,9 @@ on it, feel free to [open an issue][new-issue] or a pull request.
 3. [Writing an extension](#writing-an-extension)
     1. [File structure](#file-structure)
     2. [Exported functions](#exported-functions)
+4. [Testing](#testing)
+    1. [Unit tests](#unit-tests)
+    2. [Integration tests](#integration-tests)
 
 ## Prerequisites
 
@@ -362,3 +365,27 @@ This function should return a list of chapters based on the given manga ID.
 
 This function should return a list of pages based on the given manga ID and
 chapter ID.
+
+## Testing
+
+To test the extension, run the following command:
+
+```sh
+cargo test --package <extension-package-name>
+```
+
+Replace `<extension-package-name>` with the name of the extension package.
+
+### Unit tests
+
+Unit tests should be written in the files under the `src` directory. The tests
+should be placed in the same file as the code they are testing.
+
+### Integration tests
+
+Integration tests should be written in the `tests` directory. Each test file
+should be named `<test-name>.rs` and should contain the tests for the
+extension.
+
+Read through the [integration tests](src/multi/mangadex/tests/integration.rs) of
+MangaDex's extension to understand how to write them.
