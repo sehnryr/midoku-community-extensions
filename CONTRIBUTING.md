@@ -14,6 +14,7 @@ on it, feel free to [open an issue][new-issue] or a pull request.
 1. [Prerequisites](#prerequisites)
     1. [Tools](#tools)
     2. [Cloning the repository](#cloning-the-repository)
+2. [Getting help](#getting-help)
 
 ## Prerequisites
 
@@ -109,3 +110,15 @@ Read more on [Git's object model][git-object-model],
 [git-partial-clone]: https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
 [git-sparse-checkout]: https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/
 [git-negative-refspecs]: https://github.blog/2020-10-19-git-2-29-released/#user-content-negative-refspecs
+
+## Getting help
+
+Join the [Midoku Discord server][discord-invite] for online help and to ask
+questions while developing your extension. When doing so, please ask it in the
+[#extension-dev][discord-extension-dev] channel.
+
+[discord-invite]: https://discord.gg/SDSeUdfC33
+[discord-extension-dev]: https://discord.com/channels/1258440323886219394/1258449253399789708
+
+Some features and tricks not covered in this guide can be found in the existing
+extension code. Please refer to it for examples.
