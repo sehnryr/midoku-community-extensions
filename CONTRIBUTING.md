@@ -21,6 +21,7 @@ on it, feel free to [open an issue][new-issue] or a pull request.
 4. [Testing](#testing)
     1. [Unit tests](#unit-tests)
     2. [Integration tests](#integration-tests)
+5. [Building](#building)
 
 ## Prerequisites
 
@@ -389,3 +390,23 @@ extension.
 
 Read through the [integration tests](src/multi/mangadex/tests/integration.rs) of
 MangaDex's extension to understand how to write them.
+
+## Building
+
+To build the extension, run the following command:
+
+```sh
+cargo component build --release --target wasm32-unknown-unknown --package <extension-package-name>
+```
+
+Replace `<extension-package-name>` with the name of the extension package.
+
+You can also build all extensions (which is not recommended when the number of
+extensions is large) by running the following command:
+
+```sh
+cargo component build --release --target wasm32-unknown-unknown --workspace
+```
+
+The built extension will be located in the
+`target/wasm32-unknown-unknown/release` directory.
