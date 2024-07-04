@@ -30,6 +30,7 @@ is **required** and that existing contributors will not actively teach them to
 you.
 
 - [Rust-lang](https://www.rust-lang.org/)
+    - wasm32-unknown-unknown target (`rustup target add wasm32-unknown-unknown`)
 - Web scraping
     - [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
     - [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
