@@ -233,6 +233,9 @@ jobs:
           while read -r package_dir; do
             package_name=$(grep -oP -m 1 'name = "\K[^"]+' $package_dir/Cargo.toml)
             echo "Building $package_name"
+            # Generate the bindings for the package by checking the formatting
+            cargo component fmt --package $package_name -- --check
+            # Build the package
             cargo component build --release --target wasm32-unknown-unknown --locked --package $package_name
           done <<< "$changed_packages_dir"
 
