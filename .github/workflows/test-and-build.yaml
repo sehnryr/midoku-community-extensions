@@ -165,7 +165,7 @@ jobs:
           curl -L "$cargo_component_url" -o ~/.cargo/bin/cargo-component
 
       - name: Build extensions
-        run: cargo-component build --release --workspace --target wasm32-unknown-unknown
+        run: cargo-component build --release --target wasm32-unknown-unknown --workspace --locked
 
       - name: Package extensions
         run: .github/workflows/package.sh
