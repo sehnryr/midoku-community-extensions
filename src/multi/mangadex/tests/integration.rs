@@ -12,14 +12,16 @@ static EXTENSION_PATH: Lazy<PathBuf> = Lazy::new(|| {
     let extension_name = package_name.replace("-", "_");
 
     // Build the extension in release mode
-    let output = std::process::Command::new("cargo-component")
+    let output = std::process::Command::new("cargo")
         .args(&[
+            "component",
             "build",
             "--release",
             "--package",
             package_name,
             "--target",
             "wasm32-unknown-unknown",
+            "--locked",
         ])
         .output()
         .expect("Failed to build the extension");
