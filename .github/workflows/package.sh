@@ -26,24 +26,27 @@ for package_dir in "$workspace_dir/src/*/*"; do
     target_file=$(sed 's/-/_/g' <<< $package_name).wasm
     target="$workspace_dir/target/wasm32-unknown-unknown/release/$target_file"
 
-    # Copy the wasm file to the package directory
-    cp $target $package_dir/res/extension.wasm
+    # Package the extension only if the wasm file exists
+    if [ -f $target ]; then
+        # Copy the wasm file to the package directory
+        cp $target $package_dir/res/extension.wasm
 
-    packaged_name=${package_name:7}
-    packaged_name=${packaged_name/-/.}
+        packaged_name=${package_name:7}
+        packaged_name=${packaged_name/-/.}
 
-    # Zip the extension and manifest
-    tar --sort=name \
-        --mtime='UTC 2024-01-01' \
-        --owner=0 --group=0 --numeric-owner \
-        --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
-        -czf "$gh_pages_dir/extensions/$packaged_name-v$package_version.mix" -C $package_dir/res .
+        # Zip the extension and manifest
+        tar --sort=name \
+            --mtime='UTC 2024-01-01' \
+            --owner=0 --group=0 --numeric-owner \
+            --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
+            -czf "$gh_pages_dir/extensions/$packaged_name-v$package_version.mix" -C $package_dir/res .
 
-    # Copy the icon
-    cp $package_dir/res/icon.png "$gh_pages_dir/icons/$packaged_name.png"
+        # Copy the icon
+        cp $package_dir/res/icon.png "$gh_pages_dir/icons/$packaged_name.png"
 
-    # Clean up
-    rm $package_dir/res/extension.wasm
+        # Clean up
+        rm $package_dir/res/extension.wasm
+    fi
 
     # Update the index.json file
     extension_name=$(grep -oP -m 1 '"name": "\K[^"]+' $package_dir/res/source.json)

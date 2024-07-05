@@ -190,8 +190,25 @@ jobs:
             chmod +x ~/.cargo/bin/cargo-component
           fi
 
-      - name: Build extensions
-        run: cargo component build --release --target wasm32-unknown-unknown --workspace --locked
+      - name: Build extensions only for modified packages
+        run: |
+          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          changed_packages_dir=$(echo "$changed_files" | grep -o '^src/[^/]*/[^/]*' | sort -u)
+          if [ -z "$changed_packages_dir" ]; then
+            echo "No packages to build"
+            exit 0
+          fi
+          while read -r package_dir; do
+            package_name=$(grep -oP -m 1 'name = "\K[^"]+' $package_dir/Cargo.toml)
+            echo "Building $package_name"
+            cargo component build --release --target wasm32-unknown-unknown --locked --package $package_name
+          done <<< "$changed_packages_dir"
+
+      - name: Checkout gh-pages branch into subdirectory
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
 
       - name: Package extensions
         run: .github/workflows/package.sh
