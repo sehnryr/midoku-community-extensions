@@ -191,7 +191,7 @@ jobs:
           fi
 
       - name: Build extensions
-        run: cargo-component build --release --target wasm32-unknown-unknown --workspace --locked
+        run: cargo component build --release --target wasm32-unknown-unknown --workspace --locked
 
       - name: Package extensions
         run: .github/workflows/package.sh
