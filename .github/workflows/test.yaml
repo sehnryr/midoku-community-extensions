@@ -85,6 +85,7 @@ jobs:
             cargo_component_url="https://github.com/bytecodealliance/cargo-component/releases/download/v${CARGO_COMPONENT_VERSION}/${cargo_component_file}"
             echo "URL=${cargo_component_url}"
             curl -L "$cargo_component_url" -o ~/.cargo/bin/cargo-component
+            chmod +x ~/.cargo/bin/cargo-component
           fi
 
       - name: Run tests only on modified packages
