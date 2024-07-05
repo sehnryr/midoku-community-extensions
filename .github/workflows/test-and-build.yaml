@@ -109,8 +109,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Run `cargo fmt`
         run: cargo fmt --all -- --check
@@ -125,6 +123,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Restore sccache cache
         uses: actions/cache@v4
