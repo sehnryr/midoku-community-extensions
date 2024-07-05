@@ -70,7 +70,17 @@ jobs:
 
       - name: Install cargo-component
         run: |
-          cargo_component_file="cargo-component-x86_64-unknown-linux-gnu"
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            cargo_component_platform="x86_64-unknown-linux-gnu"
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            cargo_component_platform="x86_64-apple-darwin"
+          elif [ "${{ runner.os }}" = "Windows" ]; then
+            cargo_component_platform="x86_64-pc-windows-gnu"
+          else
+            echo "Unsupported platform: ${{ runner.os }}"
+            exit 1
+          fi
+          cargo_component_file="cargo-component-${cargo_component_platform}"
           cargo_component_url="https://github.com/bytecodealliance/cargo-component/releases/download/v${CARGO_COMPONENT_VERSION}/${cargo_component_file}"
           echo "URL=${cargo_component_url}"
           curl -L "$cargo_component_url" -o ~/.cargo/bin/cargo-component
