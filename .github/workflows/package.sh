@@ -26,13 +26,14 @@ for package_dir in "$workspace_dir/src/*/*"; do
     target_file=$(sed 's/-/_/g' <<< $package_name).wasm
     target="$workspace_dir/target/wasm32-unknown-unknown/release/$target_file"
 
+    # Get the packaged name of the extension
+    packaged_name=${package_name:7}
+    packaged_name=${packaged_name/-/.}
+
     # Package the extension only if the wasm file exists
     if [ -f $target ]; then
         # Copy the wasm file to the package directory
         cp $target $package_dir/res/extension.wasm
-
-        packaged_name=${package_name:7}
-        packaged_name=${packaged_name/-/.}
 
         # Zip the extension and manifest
         tar --sort=name \
