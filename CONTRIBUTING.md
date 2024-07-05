@@ -22,6 +22,8 @@ on it, feel free to [open an issue][new-issue] or a pull request.
     1. [Unit tests](#unit-tests)
     2. [Integration tests](#integration-tests)
 5. [Building](#building)
+6. [Submitting changes](#submitting-changes)
+    1. [Pull Request checklist](#pull-request-checklist)
 
 ## Prerequisites
 
@@ -411,3 +413,24 @@ cargo component build --release --target wasm32-unknown-unknown --workspace
 
 The built extension will be located in the
 `target/wasm32-unknown-unknown/release` directory.
+
+## Submitting changes
+
+When you feel confident about your changes, submit a new Pull Request so your
+code can be reviewed and merged if approved. We encourage following a
+[GitHub Standard Fork & Pull Request Workflow][github-standard-fork-pr-workflow]
+and following the good practices of the workflow, such as not commiting directly
+to `main`: always create a new branch for your changes.
+
+[github-standard-fork-pr-workflow]: https://gist.github.com/Chaser324/ce0505fbed06b947d962
+
+Please **do test your changes** before submitting a Pull Request. Also make sure
+to follow the Pull Request checklist available in the Pull Request body field
+when creating a new Pull Request. As a reference, you can find it below.
+
+### Pull Request checklist
+
+- [ ] I updated extension's version for individual extension changes
+- [ ] I set appropriate `nsfw` value
+- [ ] I did not change `id` even if an extension's name or language were changed
+- [ ] I tested the modifications locally
