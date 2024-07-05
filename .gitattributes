@@ -1,0 +1,2 @@
+# Mark all src/bindings.rs files as generated
+**/src/bindings.rs linguist-generated
