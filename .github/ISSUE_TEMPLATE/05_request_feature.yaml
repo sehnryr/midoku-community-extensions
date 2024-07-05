@@ -1,0 +1,49 @@
+name: ⭐ Feature request
+description: Suggest a feature to improve an existing extension
+labels: [Feature request]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Source name
+      placeholder: ExampleScans
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Source language
+      placeholder: English
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Describe your suggested feature
+      description: How can an existing extension be improved?
+      placeholder: It should work like this...
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-details
+    attributes:
+      label: Other details
+      description: Additional details and attachments.
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: Your issue will be closed if you haven't done these steps.
+      options:
+        - label: I have updated extension to the latest version.
+          required: true
+        - label: I have written a short but informative title.
+          required: true
+        - label: I have searched the existing issues and this is a new ticket, **NOT** a duplicate or related to another open or closed issue.
+          required: true
+        - label: I have filled out all of the requested information in this form.
+          required: true
