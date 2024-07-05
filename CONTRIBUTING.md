@@ -13,7 +13,8 @@ on it, feel free to [open an issue][new-issue] or a pull request.
 
 1. [Prerequisites](#prerequisites)
     1. [Tools](#tools)
-    2. [Cloning the repository](#cloning-the-repository)
+    2. [Language server configuration](#language-server-configuration)
+    3. [Cloning the repository](#cloning-the-repository)
 2. [Getting help](#getting-help)
 3. [Writing an extension](#writing-an-extension)
     1. [File structure](#file-structure)
@@ -42,6 +43,53 @@ you.
 
 - [cargo-component](https://github.com/bytecodealliance/cargo-component)
 - Basic image editing software
+
+### Language server configuration
+
+When using rust-analyzer, you may need to configure it to work with
+`cargo-component`. You will need to set the
+[`check.overrideCommand`][rust-analuzer-check-overridecommand] option to use
+`cargo-component` instead of `cargo check`.
+
+[rust-analuzer-check-overridecommand]: https://rust-analyzer.github.io/manual.html#rust-analyzer.check.overrideCommand
+
+Here is a minimal configuration for VSCode:
+
+```json
+{
+    "rust-analyzer.check.overrideCommand": [
+        "cargo",
+        "component",
+        "check",
+        "--workspace",
+        "--all-targets",
+        "--message-format=json"
+    ],
+}
+```
+
+Here is a minimal configuration for Zed:
+
+```json
+{
+    "lsp": {
+        "rust-analyzer": {
+            "initialization_options": {
+                "check": {
+                    "overrideCommand": [
+                        "cargo",
+                        "component",
+                        "check",
+                        "--workspace",
+                        "--all-targets",
+                        "--message-format=json"
+                    ]
+                }
+            }
+        }
+    }
+}
+```
 
 ### Cloning the repository
 
