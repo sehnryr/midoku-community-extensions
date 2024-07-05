@@ -8,14 +8,15 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 
+env:
+  CARGO_COMPONENT_VERSION: "0.11.0"
+  SCCACHE_CACHE_SIZE: "2G"
+  SCCACHE_VERSION: "0.8.0"
+  RUSTC_WRAPPER: "/usr/local/bin/sccache"
+
 jobs:
   test:
     name: Test modified extensions
-    env:
-      CARGO_COMPONENT_VERSION: "0.11.0"
-      SCCACHE_CACHE_SIZE: "2G"
-      SCCACHE_VERSION: "0.8.0"
-      RUSTC_WRAPPER: "/usr/local/bin/sccache"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -149,11 +150,6 @@ jobs:
   build:
     name: Build extensions
     needs: rustfmt
-    env:
-      CARGO_COMPONENT_VERSION: "0.11.0"
-      SCCACHE_CACHE_SIZE: "2G"
-      SCCACHE_VERSION: "0.8.0"
-      RUSTC_WRAPPER: "/usr/local/bin/sccache"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
