@@ -110,8 +110,42 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore cargo cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install cargo-component
+        run: |
+          if ! command -v cargo-component || ! cargo-component --version | grep -q $CARGO_COMPONENT_VERSION; then
+            if [ "${{ runner.os }}" = "Linux" ]; then
+              cargo_component_platform="x86_64-unknown-linux-gnu"
+            elif [ "${{ runner.os }}" = "macOS" ]; then
+              cargo_component_platform="x86_64-apple-darwin"
+            elif [ "${{ runner.os }}" = "Windows" ]; then
+              cargo_component_platform="x86_64-pc-windows-gnu"
+            else
+              echo "Unsupported platform: ${{ runner.os }}"
+              exit 1
+            fi
+            cargo_component_file="cargo-component-${cargo_component_platform}"
+            cargo_component_url="https://github.com/bytecodealliance/cargo-component/releases/download/v${CARGO_COMPONENT_VERSION}/${cargo_component_file}"
+            echo "URL=${cargo_component_url}"
+            curl -L "$cargo_component_url" -o ~/.cargo/bin/cargo-component
+            chmod +x ~/.cargo/bin/cargo-component
+          fi
+
       - name: Run `cargo fmt`
-        run: cargo fmt --all -- --check
+        run: cargo component fmt --all -- --check
+
   build:
     name: Build extensions
     needs: rustfmt
