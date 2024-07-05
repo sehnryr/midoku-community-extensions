@@ -1,0 +1,56 @@
+name: 🔗 URL change report
+description: Report URL change of an existing source
+labels: [Bug, Domain changed]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Source name
+      placeholder: ExampleScans
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      placeholder: 1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Source language
+      placeholder: English
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Source new URL
+      placeholder: https://newexamplescans.com
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-details
+    attributes:
+      label: Other details
+      description: Additional details and attachments.
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: Your issue will be closed if you haven't done these steps.
+      options:
+        - label: I have updated extension to the latest version.
+          required: true
+        - label: I have written a short but informative title.
+          required: true
+        - label: I have searched the existing issues and this is a new ticket, **NOT** a duplicate or related to another open or closed issue.
+          required: true
+        - label: I have filled out all of the requested information in this form.
+          required: true
