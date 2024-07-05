@@ -2,7 +2,7 @@ name: Build extensions
 
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
 
 concurrency:
   group: ${{ github.workflow }}
@@ -69,7 +69,21 @@ jobs:
       - name: Install cargo-component
         run: |
           if ! command -v cargo-component || ! cargo-component --version | grep -q $CARGO_COMPONENT_VERSION; then
-            cargo install cargo-component --locked --version $CARGO_COMPONENT_VERSION --force
+            if [ "${{ runner.os }}" = "Linux" ]; then
+              cargo_component_platform="x86_64-unknown-linux-gnu"
+            elif [ "${{ runner.os }}" = "macOS" ]; then
+              cargo_component_platform="x86_64-apple-darwin"
+            elif [ "${{ runner.os }}" = "Windows" ]; then
+              cargo_component_platform="x86_64-pc-windows-gnu"
+            else
+              echo "Unsupported platform: ${{ runner.os }}"
+              exit 1
+            fi
+            cargo_component_file="cargo-component-${cargo_component_platform}"
+            cargo_component_url="https://github.com/bytecodealliance/cargo-component/releases/download/v${CARGO_COMPONENT_VERSION}/${cargo_component_file}"
+            echo "URL=${cargo_component_url}"
+            curl -L "$cargo_component_url" -o ~/.cargo/bin/cargo-component
+            chmod +x ~/.cargo/bin/cargo-component
           fi
 
       - name: Run tests only on modified packages
@@ -159,11 +173,25 @@ jobs:
       - name: Install cargo-component
         run: |
           if ! command -v cargo-component || ! cargo-component --version | grep -q $CARGO_COMPONENT_VERSION; then
-            cargo install cargo-component --locked --version $CARGO_COMPONENT_VERSION --force
+            if [ "${{ runner.os }}" = "Linux" ]; then
+              cargo_component_platform="x86_64-unknown-linux-gnu"
+            elif [ "${{ runner.os }}" = "macOS" ]; then
+              cargo_component_platform="x86_64-apple-darwin"
+            elif [ "${{ runner.os }}" = "Windows" ]; then
+              cargo_component_platform="x86_64-pc-windows-gnu"
+            else
+              echo "Unsupported platform: ${{ runner.os }}"
+              exit 1
+            fi
+            cargo_component_file="cargo-component-${cargo_component_platform}"
+            cargo_component_url="https://github.com/bytecodealliance/cargo-component/releases/download/v${CARGO_COMPONENT_VERSION}/${cargo_component_file}"
+            echo "URL=${cargo_component_url}"
+            curl -L "$cargo_component_url" -o ~/.cargo/bin/cargo-component
+            chmod +x ~/.cargo/bin/cargo-component
           fi
 
       - name: Build extensions
-        run: cargo component build --release --workspace --target wasm32-unknown-unknown
+        run: cargo-component build --release --target wasm32-unknown-unknown --workspace --locked
 
       - name: Package extensions
         run: .github/workflows/package.sh
