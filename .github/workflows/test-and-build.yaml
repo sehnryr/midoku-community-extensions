@@ -68,9 +68,10 @@ jobs:
 
       - name: Install cargo-component
         run: |
-          if ! command -v cargo-component || ! cargo-component --version | grep -q $CARGO_COMPONENT_VERSION; then
-            cargo install cargo-component --locked --version $CARGO_COMPONENT_VERSION --force
-          fi
+          cargo_component_file="cargo-component-x86_64-unknown-linux-gnu"
+          cargo_component_url="https://github.com/bytecodealliance/cargo-component/releases/download/v${CARGO_COMPONENT_VERSION}/${cargo_component_file}"
+          echo "URL=${cargo_component_url}"
+          curl -L "$cargo_component_url" -o ~/.cargo/bin/cargo-component
 
       - name: Run tests only on modified packages
         run: |
