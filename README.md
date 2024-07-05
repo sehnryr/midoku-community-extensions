@@ -1,5 +1,12 @@
 # Midoku Source Extensions
 
+## Contributing
+
+Contributions are welcome!
+
+Check out the [contribution guidelines](CONTRIBUTING.md) to get started with
+development.
+
 ## License
 
 Licensed under either of
