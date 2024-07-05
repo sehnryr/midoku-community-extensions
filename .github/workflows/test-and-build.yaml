@@ -204,6 +204,12 @@ jobs:
             cargo component build --release --target wasm32-unknown-unknown --locked --package $package_name
           done <<< "$changed_packages_dir"
 
+      - name: Checkout gh-pages branch into subdirectory
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
       - name: Package extensions
         run: .github/workflows/package.sh
 
